@@ -1,0 +1,7 @@
+---
+- hosts: all
+  tasks:
+    - name: remove base.repo
+      file:
+        path: /etc/yum.repos.d/base.repo
+        state: absent

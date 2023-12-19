@@ -1,0 +1,16 @@
+---
+# handlers file for ha-test
+- name: reload haproxy
+  service:
+    name: haproxy.service
+    state: restarted
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+
+- name: restart keepalived
+  service:
+    name: keepalived
+    state: restarted

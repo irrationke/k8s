@@ -1,0 +1,157 @@
+---
+# tasks file for ha-test
+- name: 安装se插件
+  yum:
+    state: installed
+    name: "libselinux-python3"
+  register: install_py
+
+- name: 展示yum安装
+  debug:
+    msg: "{{ install_py }}"
+
+- name: 关闭selinux
+  selinux:
+    state: disabled 
+  tags: down
+
+- name: 修改iptable配置文件 
+  blockinfile:
+    path: /etc/sysconfig/iptables
+    block: "-A INPUT -s {{  ansible_default_ipv4.address }}/24 -d 224.0.0.18 -j ACCEPT\n-A INPUT -s {{  ansible_default_ipv4.address }}/24 -p vrrp -j ACCEPT\n-A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT"
+  tags: tt
+
+- name: ipv4地址测试
+  debug:
+    msg: "{{ ansible_default_ipv4.address  }}"
+  tags: tt
+
+- name: yum安装gcc gcc-c++ make openssl-devel kernel-devel
+  yum:
+    state: installed
+    name: "systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,openssl-perl.x86_64,net-tools,gcc,automake,autoconf,libtool,make"  
+  tags: sk
+
+- name: 下载haproxy二进制文件
+  get_url:
+    url: http://www.haproxy.org/download/1.6/src/haproxy-1.6.12.tar.gz
+    dest: /var
+  register: down_haproxy
+  tags: sk
+
+- name: 展示下载haproxy
+  debug:
+    msg: "{{ down_haproxy  }}"  
+  tags: sk
+
+- name: jie ya wen jian
+  unarchive:
+    src: /var/haproxy-1.6.12.tar.gz
+    dest: /var/
+    copy: no
+  tags: sk
+
+- name: 编译安装haproxy
+  make:
+    chdir: /var/haproxy-1.6.12
+    #target: install
+    params:
+      PREFIX: /usr/local/haproxy
+      USE_OPENSSL: 1
+      ADDLIB: -lz
+      TARGET: linux51 
+      CPU: x86_64
+    file: /var/haproxy-1.6.12/Makefile
+  register: make_haproxy
+  tags: sk
+
+- name: zhanshi make
+  debug:
+    msg: "make_haproxy"
+  tags: sk
+
+- name: yum安装haproxy和keepalived
+  yum:
+    name: "keepalived,haproxy"
+    state: installed
+  register: yum_haproxy
+  tags: tt
+
+- name: zhanshi make
+  debug:
+    msg: "{{ yum_haproxy }}"
+  tags: tt
+
+- name: 备份haproxy配置文件
+  copy:
+    src: ../files/haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+    backup: yes
+  notify: reload haproxy
+
+- name: 展示haproxy状态
+  block:
+    - name: status haproxy
+      shell: "systemctl status haproxy"
+      register: status_haproxy
+
+    - name: debug msg
+      debug:
+        msg: "{{ status_haproxy }}"
+
+- name: 添加haproxy日志
+  blockinfile:
+    path: /etc/rsyslog.conf
+    block: "$ModLoad imudp\n$UDPServerRun 514\nlocal3.*                                                /var/log/haproxy.log"
+  tags: mb
+
+- name: 添加接受远程服务器日志配置
+  copy:
+    src: ../files/rsyslog
+    dest: /etc/sysconfig/rsyslog
+    backup: yes
+  notify: restart rsyslog
+  tags: mb
+
+- name: 配置keepalived配置文件
+  block:
+    - name: 配置master配置文件
+      copy:
+        src: ../files/keepalived-master.conf
+        dest: /etc/keepalived/keepalived.conf
+        backup: yes
+      when: 
+        - ansible_default_ipv4.address == '{{ master_ip }}'
+      notify: restart keepalived
+
+    - name: 配置backup配置文件
+      copy:
+        src: ../files/keepalived-backup.conf
+        dest: /etc/keepalived/keepalived.conf
+        backup: yes
+      when: 
+        - ansible_default_ipv4.address == '{{ backup_ip }}'
+      notify: restart keepalived
+  tags: mb
+
+- name: 拷贝check脚本
+  copy:
+    src: ../files/check_haproxy.sh
+    dest: /etc/keepalived/check_haproxy.sh
+    mode: 777
+
+- name: 拷贝clean_arp脚本
+  copy:
+    src: ../files/clean_arp.sh
+    dest: /etc/keepalived/clean_arp.sh
+    mode: 777
+
+
+
+
+
+
+
+
+
+
