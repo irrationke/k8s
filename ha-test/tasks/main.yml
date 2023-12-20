@@ -70,12 +70,25 @@
     msg: "make_haproxy"
   tags: sk
 
+- name: 拷贝rpm包
+  copy:
+    src: /k8s/package/
+    dest: /root/package/
+
 - name: yum安装haproxy和keepalived
   yum:
-    name: "keepalived,haproxy"
-    state: installed
+    # name: "{{ item }}"
+    name: "haproxy,keepalived"
+    state: present
   register: yum_haproxy
   tags: tt
+  # loop:
+  #   - /root/package/haproxy-2.4.8-4.oe2203.x86_64.rpm
+  #   - /root/package/keepalived-2.2.4-2.oe2203.x86_64.rpm
+  #   - /root/package/mariadb-connector-c-3.1.13-2.oe2203.x86_64.rpm
+  #   - /root/package/net-snmp-libs-5.9.1-5.oe2203.x86_64.rpm
+  #   - /root/package/net-snmp-5.9.1-5.oe2203.x86_64.rpm
+
 
 - name: zhanshi make
   debug:
@@ -87,7 +100,12 @@
     src: ../files/haproxy.cfg
     dest: /etc/haproxy/haproxy.cfg
     backup: yes
-  notify: reload haproxy
+  notify: "reload haproxy"
+
+- name: 重新启动haproxy
+  systemd:
+    name: haproxy.service
+    state: restarted
 
 - name: 展示haproxy状态
   block:
@@ -110,7 +128,8 @@
     src: ../files/rsyslog
     dest: /etc/sysconfig/rsyslog
     backup: yes
-  notify: restart rsyslog
+  notify: 
+    restart rsyslog
   tags: mb
 
 - name: 配置keepalived配置文件
@@ -122,7 +141,8 @@
         backup: yes
       when: 
         - ansible_default_ipv4.address == '{{ master_ip }}'
-      notify: restart keepalived
+      notify: 
+        restart keepalived
 
     - name: 配置backup配置文件
       copy:
@@ -131,7 +151,8 @@
         backup: yes
       when: 
         - ansible_default_ipv4.address == '{{ backup_ip }}'
-      notify: restart keepalived
+      notify: 
+        restart keepalived
   tags: mb
 
 - name: 拷贝check脚本
