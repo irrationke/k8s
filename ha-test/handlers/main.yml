@@ -9,8 +9,10 @@
   systemd:
     name: rsyslog
     state: restarted
+  ignore_errors: yes
 
 - name: restart keepalived
   systemd:
     name: keepalived
     state: restarted
+  tags: runkeep

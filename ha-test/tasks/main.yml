@@ -1,21 +1,21 @@
 ---
 # tasks file for ha-test
-- name: 安装se插件
+- name: 安装libselinux-python3插件
   yum:
     state: installed
     name: "libselinux-python3"
   register: install_py
 
-- name: 展示yum安装
+- name: 展示libselinux-python3插件安装情况
   debug:
     msg: "{{ install_py }}"
 
-- name: 关闭selinux
+- name: 关闭selinux系统
   selinux:
-    state: disabled 
+    state: disabled
   tags: down
 
-- name: 修改iptable配置文件 
+- name: 修改iptable配置文件
   blockinfile:
     path: /etc/sysconfig/iptables
     block: "-A INPUT -s {{  ansible_default_ipv4.address }}/24 -d 224.0.0.18 -j ACCEPT\n-A INPUT -s {{  ansible_default_ipv4.address }}/24 -p vrrp -j ACCEPT\n-A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT"
@@ -29,7 +29,7 @@
 - name: yum安装gcc gcc-c++ make openssl-devel kernel-devel
   yum:
     state: installed
-    name: "systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,openssl-perl.x86_64,net-tools,gcc,automake,autoconf,libtool,make"  
+    name: "systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,openssl-perl.x86_64,net-tools,gcc,automake,autoconf,libtool,make"
   tags: sk
 
 - name: 下载haproxy二进制文件
@@ -39,12 +39,12 @@
   register: down_haproxy
   tags: sk
 
-- name: 展示下载haproxy
+- name: 展示下载haproxy二进制文件情况
   debug:
-    msg: "{{ down_haproxy  }}"  
+    msg: "{{ down_haproxy  }}"
   tags: sk
 
-- name: jie ya wen jian
+- name: 解压haproxy二进制文件
   unarchive:
     src: /var/haproxy-1.6.12.tar.gz
     dest: /var/
@@ -59,29 +59,31 @@
       PREFIX: /usr/local/haproxy
       USE_OPENSSL: 1
       ADDLIB: -lz
-      TARGET: linux51 
+      TARGET: linux51
       CPU: x86_64
     file: /var/haproxy-1.6.12/Makefile
   register: make_haproxy
   tags: sk
 
-- name: zhanshi make
+- name: 展示编译安装haproxy情况
   debug:
     msg: "make_haproxy"
   tags: sk
 
-- name: 拷贝rpm包
+- name: 拷贝haproxy和keepalived的rpm包
   copy:
     src: /k8s/package/
     dest: /root/package/
-
-- name: yum安装haproxy和keepalived
-  yum:
-    # name: "{{ item }}"
-    name: "haproxy,keepalived"
-    state: present
-  register: yum_haproxy
+    force: no
   tags: tt
+
+# - name: 使用yum安装haproxy和keepalived
+#   yum:
+#     # name: "{{ item }}"
+#     name: "haproxy,keepalived"
+#     state: present
+#   register: yum_haproxy
+#   tags: tt
   # loop:
   #   - /root/package/haproxy-2.4.8-4.oe2203.x86_64.rpm
   #   - /root/package/keepalived-2.2.4-2.oe2203.x86_64.rpm
@@ -89,15 +91,17 @@
   #   - /root/package/net-snmp-libs-5.9.1-5.oe2203.x86_64.rpm
   #   - /root/package/net-snmp-5.9.1-5.oe2203.x86_64.rpm
 
+# - name: 展示安装haproxy和keepalived的情况
+#   debug:
+#     msg: "{{ yum_haproxy }}"
+#   tags: tt
 
-- name: zhanshi make
-  debug:
-    msg: "{{ yum_haproxy }}"
-  tags: tt
+- name: 使用yum安装haproxy和keepalived
+  shell: "dnf localinstall -y /root/package/*.rpm"
 
-- name: 备份haproxy配置文件
-  copy:
-    src: ../files/haproxy.cfg
+- name: 修改haproxy配置文件
+  template:
+    src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
     backup: yes
   notify: "reload haproxy"
@@ -109,15 +113,15 @@
 
 - name: 展示haproxy状态
   block:
-    - name: status haproxy
+    - name: 收集haproxy运行状态信息
       shell: "systemctl status haproxy"
       register: status_haproxy
 
-    - name: debug msg
+    - name: 展示haproxy运行状态信息
       debug:
         msg: "{{ status_haproxy }}"
 
-- name: 添加haproxy日志
+- name: 添加haproxy日志信息
   blockinfile:
     path: /etc/rsyslog.conf
     block: "$ModLoad imudp\n$UDPServerRun 514\nlocal3.*                                                /var/log/haproxy.log"
@@ -128,51 +132,38 @@
     src: ../files/rsyslog
     dest: /etc/sysconfig/rsyslog
     backup: yes
-  notify: 
-    restart rsyslog
+  notify: restart rsyslog
   tags: mb
 
 - name: 配置keepalived配置文件
   block:
-    - name: 配置master配置文件
-      copy:
-        src: ../files/keepalived-master.conf
+    - name: 配置keepalived的master配置文件
+      template:
+        src: keepalived-master.conf.j2
         dest: /etc/keepalived/keepalived.conf
         backup: yes
-      when: 
-        - ansible_default_ipv4.address == '{{ master_ip }}'
-      notify: 
-        restart keepalived
+      when:
+        - ansible_default_ipv4.address == {{ master_ip }}
+      notify: restart keepalived
 
-    - name: 配置backup配置文件
-      copy:
-        src: ../files/keepalived-backup.conf
+    - name: 配置keepalived的backup配置文件
+      template:
+        src: keepalived-backup.conf.j2
         dest: /etc/keepalived/keepalived.conf
         backup: yes
-      when: 
-        - ansible_default_ipv4.address == '{{ backup_ip }}'
-      notify: 
-        restart keepalived
+      when:
+        - ansible_default_ipv4.address == {{ backup_ip }}
+      notify: restart keepalived
   tags: mb
 
 - name: 拷贝check脚本
-  copy:
-    src: ../files/check_haproxy.sh
+  template:
+    src: check_haproxy.sh.j2
     dest: /etc/keepalived/check_haproxy.sh
     mode: 777
 
 - name: 拷贝clean_arp脚本
-  copy:
-    src: ../files/clean_arp.sh
+  template:
+    src: clean_arp.sh.j2
     dest: /etc/keepalived/clean_arp.sh
     mode: 777
-
-
-
-
-
-
-
-
-
-

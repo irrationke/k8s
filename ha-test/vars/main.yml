@@ -8,4 +8,4 @@ package:
   - /root/package/mariadb-connector-c-3.1.13-2.oe2203.x86_64.rpm
   - /root/package/net-snmp-5.9.1-5.oe2203.x86_64.rpm
   - /root/package/net-snmp-libs-5.9.1-5.oe2203.x86_64.rpm
-
+vip: 192.168.56.11
