@@ -1,0 +1,38 @@
+---
+# tasks file for dnf
+
+- name: openEuler的base.repo源仓库模块
+  block:
+    - name: 判断openEuler.repo源仓库是否存在
+      stat:
+        path: /etc/yum.repos.d/openEuler.repo
+      register: openEuler_repo
+
+    - name: 备份openEuler.repo源仓库
+      shell: "mv /etc/yum.repos.d/openEuler.repo /etc/yum.repos.d/openEuler.repo.bak"
+      when: openEuler_repo.stat.exists
+
+    - name: 判断base.repo是否存在
+      stat:
+        path: /etc/yum.repos.d/base.repo
+      register: base_repo
+
+    - name: 添加base.repo源仓库
+      yum_repository:
+        name: base
+        description: 191.168.56.100 repo
+        baseurl: http://192.168.56.100
+        gpgkey: http://192.168.56.100/RPM-GPG-KEY-openEuler
+        gpgcheck: yes
+        enabled: yes
+      when: not base_repo.stat.exists
+
+    - name: 更新dnf缓存
+      shell: "dnf clean all && dnf makecache"
+
+    - name: 安装基本工具
+      dnf:
+        state: installed
+        update_cache: yes
+        name: "systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl"
+  when: ansible_pkg_mgr == "dnf"

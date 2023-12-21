@@ -1,7 +1,8 @@
-192.168.56.101 | SUCCESS => {
+{
     "ansible_facts": {
         "ansible_all_ipv4_addresses": [
-            "192.168.56.101"
+            "192.168.56.101",
+            "192.168.56.11"
         ],
         "ansible_all_ipv6_addresses": [
             "fe80::6ad:f9d1:dfb3:a440"
@@ -21,23 +22,23 @@
             "root": "/dev/mapper/openeuler-root"
         },
         "ansible_date_time": {
-            "date": "2023-12-10",
-            "day": "10",
-            "epoch": "1702143208",
-            "hour": "01",
-            "iso8601": "2023-12-09T17:33:28Z",
-            "iso8601_basic": "20231210T013328517885",
-            "iso8601_basic_short": "20231210T013328",
-            "iso8601_micro": "2023-12-09T17:33:28.517885Z",
-            "minute": "33",
+            "date": "2023-12-18",
+            "day": "18",
+            "epoch": "1702905738",
+            "hour": "21",
+            "iso8601": "2023-12-18T13:22:18Z",
+            "iso8601_basic": "20231218T212218419931",
+            "iso8601_basic_short": "20231218T212218",
+            "iso8601_micro": "2023-12-18T13:22:18.419931Z",
+            "minute": "22",
             "month": "12",
-            "second": "28",
-            "time": "01:33:28",
+            "second": "18",
+            "time": "21:22:18",
             "tz": "CST",
             "tz_offset": "+0800",
-            "weekday": "星期日",
-            "weekday_number": "0",
-            "weeknumber": "49",
+            "weekday": "星期一",
+            "weekday_number": "1",
+            "weeknumber": "51",
             "year": "2023"
         },
         "ansible_default_ipv4": {
@@ -300,7 +301,7 @@
                 "192.168.56.1"
             ]
         },
-        "ansible_domain": "localdomain",
+        "ansible_domain": "",
         "ansible_effective_group_id": 0,
         "ansible_effective_user_id": 0,
         "ansible_enp0s3": {
@@ -375,6 +376,14 @@
                 "netmask": "255.255.255.0",
                 "network": "192.168.56.0"
             },
+            "ipv4_secondaries": [
+                {
+                    "address": "192.168.56.11",
+                    "broadcast": "",
+                    "netmask": "255.255.255.255",
+                    "network": "192.168.56.11"
+                }
+            ],
             "ipv6": [
                 {
                     "address": "fe80::6ad:f9d1:dfb3:a440",
@@ -403,22 +412,22 @@
             "SELINUX_USE_CURRENT_RANGE": "",
             "SHELL": "/bin/bash",
             "SHLVL": "1",
-            "SSH_CLIENT": "192.168.56.100 50724 22",
-            "SSH_CONNECTION": "192.168.56.100 50724 192.168.56.101 22",
-            "SSH_TTY": "/dev/pts/1",
-            "TERM": "xterm",
+            "SSH_CLIENT": "192.168.56.100 53472 22",
+            "SSH_CONNECTION": "192.168.56.100 53472 192.168.56.101 22",
+            "SSH_TTY": "/dev/pts/0",
+            "TERM": "xterm-256color",
             "USER": "root",
             "_": "/usr/bin/python3"
         },
         "ansible_fibre_channel_wwn": [],
         "ansible_fips": false,
         "ansible_form_factor": "Other",
-        "ansible_fqdn": "localhost.localdomain",
-        "ansible_hostname": "localhost",
+        "ansible_fqdn": "k8s-master01",
+        "ansible_hostname": "k8s-master01",
         "ansible_hostnqn": "",
         "ansible_interfaces": [
-            "lo",
-            "enp0s3"
+            "enp0s3",
+            "lo"
         ],
         "ansible_is_chroot": false,
         "ansible_iscsi_iqn": "",
@@ -543,39 +552,39 @@
         },
         "ansible_machine": "x86_64",
         "ansible_machine_id": "42ac499eecc44f28918d5947066b3cd9",
-        "ansible_memfree_mb": 176,
+        "ansible_memfree_mb": 166,
         "ansible_memory_mb": {
             "nocache": {
-                "free": 317,
-                "used": 140
+                "free": 303,
+                "used": 154
             },
             "real": {
-                "free": 176,
+                "free": 166,
                 "total": 457,
-                "used": 281
+                "used": 291
             },
             "swap": {
-                "cached": 2,
-                "free": 2161,
+                "cached": 3,
+                "free": 2163,
                 "total": 2199,
-                "used": 38
+                "used": 36
             }
         },
         "ansible_memtotal_mb": 457,
         "ansible_mounts": [
             {
-                "block_available": 10446515,
+                "block_available": 10443638,
                 "block_size": 4096,
                 "block_total": 11510997,
-                "block_used": 1064482,
+                "block_used": 1067359,
                 "device": "/dev/mapper/openeuler-root",
                 "fstype": "ext4",
-                "inode_available": 2878429,
+                "inode_available": 2878178,
                 "inode_total": 2949120,
-                "inode_used": 70691,
+                "inode_used": 70942,
                 "mount": "/",
                 "options": "rw,seclabel,relatime",
-                "size_available": 42788925440,
+                "size_available": 42777141248,
                 "size_total": 47149043712,
                 "uuid": "20bc4d4f-9291-4ecf-b97d-5c6d0002b803"
             },
@@ -612,7 +621,7 @@
                 "uuid": "e4273735-7a6d-4879-bb53-f50882d68c98"
             }
         ],
-        "ansible_nodename": "localhost.localdomain",
+        "ansible_nodename": "k8s-master01",
         "ansible_os_family": "RedHat",
         "ansible_pkg_mgr": "dnf",
         "ansible_proc_cmdline": {
@@ -662,20 +671,24 @@
         "ansible_real_group_id": 0,
         "ansible_real_user_id": 0,
         "ansible_selinux": {
-            "status": "Missing selinux Python library"
+            "config_mode": "disabled",
+            "mode": "permissive",
+            "policyvers": 33,
+            "status": "enabled",
+            "type": "targeted"
         },
-        "ansible_selinux_python_present": false,
+        "ansible_selinux_python_present": true,
         "ansible_service_mgr": "systemd",
         "ansible_ssh_host_key_ecdsa_public": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNM3Rf6ewkeCYZ8xAQm16ioA1tKtHe67shmOmPE3m1/0riX4BdDXMmF/bN6efb2km8qUmB7GTcVhCP2DZl5QSIo=",
         "ansible_ssh_host_key_ed25519_public": "AAAAC3NzaC1lZDI1NTE5AAAAIGk1O43InP7rsW+ihyKO0iMRm7DTLnNkXjByxYwZTFDc",
         "ansible_ssh_host_key_rsa_public": "AAAAB3NzaC1yc2EAAAADAQABAAABgQCntSvVB4jfYXSwZf2mLgywJwmjdhZfpBeZuTz8h+DMsVotjmB+TP7Gfo58a2aEAuxj3ND24mxn4zXLvqM3vkTjXFWrJaWGdrpGJVWPWHj/seBw5ftWloEkkBs5w6UTfyjAAr1g4+M0GsQg2dnv5FAuyKKxpGZEE+4NEOReqaM9Fww7IXjqBpiO07nKatTD24XUxoDzolBv97A+H0RRRPMoAQt2WhKo1wScIEAfFtAeUpgmJhpCmdVANnTKXWMa1c1VL42aElEBlQY4hnytj5wyrCTDf8OtCF+zxVpIsm+FgSGjEl6ISDULsPpS3MCisYbQhC69ljXaglAKIyxbLE/NPWWyvRcxh8r5t7F4Q/QQed9g8fyemQLgTV7RImznCMQ5KyR9YXiY0J4cQmvXZJzcJVjpph8nrUuryUkwe/xru086UN/XoA8zjYuzVbq1EndYRZ3ByJkaFwc7iR+wk9i0zsy/biNMWTClnNASQ0dZotA4SATvgtTv3omqAAhQT3s=",
-        "ansible_swapfree_mb": 2161,
+        "ansible_swapfree_mb": 2163,
         "ansible_swaptotal_mb": 2199,
         "ansible_system": "Linux",
         "ansible_system_capabilities": [],
         "ansible_system_capabilities_enforced": "False",
         "ansible_system_vendor": "innotek GmbH",
-        "ansible_uptime_seconds": 18455,
+        "ansible_uptime_seconds": 28998,
         "ansible_user_dir": "/root",
         "ansible_user_gecos": "root",
         "ansible_user_gid": 0,
