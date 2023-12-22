@@ -1,0 +1,92 @@
+---
+# tasks file for containerd
+- name: 解压Containerd的cni插件
+  block:
+    - name: 解压cni-plugins
+      block:
+        - name: 创建/opt/cni/bin/文件夹
+          file:
+            path: /opt/cni/bin/
+            state: directory
+
+        - name: 解压cni-plugins
+          unarchive:
+            copy: yes
+            src: ./files/cni-plugins-linux-amd64-v1.3.0.tgz
+            dest: /opt/cni/bin/
+      # tags:
+
+    - name: 解压cri-containerd-cni
+      unarchive:
+        copy: yes
+        src: ./files/cri-containerd-cni-1.7.8-linux-amd64.tar.gz
+        dest: /
+      # tags:
+
+- name: 配置Containerd所需的模块
+  template:
+    src: ./templates/containerd.conf.j2
+    dest: /etc/modules-load.d/containerd.conf
+    backup: yes
+  # tags:
+
+- name: 加载内核模块
+  systemd:
+    name: systemd-modules-load.service
+    state: restarted
+
+- name: 配置Containerd所需的内核
+  template:
+    src: ./templates/99-kubernetes-cri.conf.j2
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+    backup: yes
+  notify: reload system
+
+- name: 拷贝Containerd配置文件
+  template:
+    src: ./templates/config.toml.j2
+    dest: /etc/containerd/config.toml
+
+- name: 配置加速器
+  block:
+    - name: 创建/etc/containerd/certs.d/docker.io文件夹
+      file:
+        path: /etc/containerd/certs.d/docker.io
+        state: directory
+    - name: 拷贝加速器配置文件
+      template:
+        src: ./templates/hosts.toml.j2
+        dest: /etc/containerd/certs.d/docker.io/hosts.toml
+      # tags:
+
+- name: 启动并设置Containerd为开机启动
+  block:
+    - name: 重新加载systemctl
+      shell: "systemctl daemon-reload"
+
+    - name: 设置Containerd为开机启动(立即执行)
+      shell: "systemctl enable --now containerd.service"
+
+- name: 配置crictl客户端连接的运行时位置
+  block:
+    - name: 解压crictl客户端
+      unarchive:
+        copy: yes
+        src: ./files/crictl-v1.28.0-linux-amd64.tar.gz
+        dest: /usr/bin/
+
+    - name: 拷贝crictl配置文件
+      template:
+        src: ./templates/crictl.yaml.j2
+        dest: /etc/crictl.yaml
+
+- name: 重新加载containerd配置文件
+  shell: "systemctl restart  containerd"
+
+- name: 测试crictl命令
+  shell: "crictl info"
+  register: test_crictl
+
+- name: 展示crictl info命令结果
+  debug:
+    msg: "{{ test_crictl }}"

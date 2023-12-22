@@ -1,0 +1,4 @@
+---
+# handlers file for containerd
+- name: reload system
+  shell: "sysctl --system"
