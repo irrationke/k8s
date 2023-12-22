@@ -1,0 +1,4 @@
+containerd/files/crictl-v1.28.0-linux-amd64.tar.gz
+containerd/files/cri-containerd-cni-1.7.8-linux-amd64.tar.gz
+containerd/files/cni-plugins-linux-amd64-v1.3.0.tgz
+kubernetes-v1.28.3.tar
