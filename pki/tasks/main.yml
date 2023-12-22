@@ -1,0 +1,154 @@
+---
+# tasks file for pki
+- name: 申请etcd的证书
+  block:
+    - name: 拷贝CA证书所需的基本配置文件
+      template:
+        src: ca-config.json.j2
+        dest: /etc/etcd/ssl/ca-config.json
+
+    - name: etcd的根证书模块
+      block:
+        - name: 拷贝生成CA证书机构的CSR签名请求文件
+          template:
+            src: etcd-ca-csr.json.j2
+            dest: /etc/etcd/ssl/etcd-ca-csr.json
+
+        - name: 根据配置文件etcd-ca-csr.json生成一个etcd的CA证书机构(根证书)
+          shell: "cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare /etc/etcd/ssl/etcd-ca"
+
+    - name: etcd证书模块
+      block:
+        - name: 拷贝生成etcd证书签名请求
+          template:
+            src: etcd-csr.json.j2
+            dest: /etc/etcd/ssl/etcd-csr.json
+
+        - name: 生成etcd证书
+          shell: "cfssl gencert -ca=/etc/etcd/ssl/etcd-ca.pem -ca-key=/etc/etcd/ssl/etcd-ca-key.pem -config=ca-config.json -hostname={{ hostname_pki }} -profile=kubernetes etcd-csr.json | cfssljson -bare /etc/etcd/ssl/etcd"
+          tags:
+
+    - name: 拷贝证书到其他节点
+
+  when: ansible[][][] ==
+
+- name: 创建存放k8s证书的目录
+  shell: "mkdir -p /etc/kubernetes/pki"
+
+- name: 生成k8s相关证书===>>apiserver证书
+  block:
+    - name: kubernetes的根证书模块
+      block:
+        - name: 拷贝ca-csr.json文件
+          template:
+            src: ca-csr.json.j2
+            dest: /etc/kubernetes/pki/ca-csr.json
+
+        - name: 生成kubernetes的CA机构证书
+          shell: "cfssl gencert -initca ca-csr.json | cfssljson -bare /etc/kubernetes/pki/ca"
+
+    - name: Kubernetes API Server证书生成模块
+      block:
+        - name: 拷贝申请api server证书的配置文件
+          template:
+            src: apiserver-csr.json.j2
+            dest: /etc/kubernetes/pki/apiserver-csr.json
+
+        - name: 生成api server证书
+          shell: "cfssl gencert -ca=/etc/kubernetes/pki/ca.pem -ca-key=/etc/kubernetes/pki/ca-key.pem -config=ca-config.json -hostname={{  }} -profile=kubernetes apiserver-csr.json | cfssljson -bare /etc/kubernetes/pki/apiserver"
+
+  when: ansible[][][] ==
+
+- name: 生成k8s相关证书===>>apiserver聚合证书
+  block:
+    - name: apiserver聚合证书的根证书模块
+      block:
+        - name: 拷贝front-proxy-ca-csr.json文件
+          template:
+            src: front-proxy-ca-csr.json.j2
+            dest: /etc/kubernetes/pki/front-proxy-ca-csr.json
+
+        - name: 生成apiserver聚合证书的根证书
+          shell: "cfssl gencert -initca front-proxy-ca-csr.json | cfssljson -bare /etc/kubernetes/pki/front-proxy-ca"
+
+    - name: apiserver聚合证书生成模块
+      block:
+        - name: 拷贝front-proxy-client-csr.json文件
+          template:
+            src: front-proxy-client-csr.json.j2
+            dest: /etc/kubernetes/pki/front-proxy-client-csr.json
+
+        - name: 生成apiserver聚合证书
+          shell: "cfssl gencert -ca=/etc/kubernetes/pki/front-proxy-ca.pem -ca-key=/etc/kubernetes/pki/front-proxy-ca-key.pem -config=ca-config.json -profile=kubernetes   front-proxy-client-csr.json | cfssljson -bare /etc/kubernetes/pki/front-proxy-client"
+
+  when: ansible[][][] ==
+
+- name:
+  block:
+    - name:
+      block:
+        - name:
+        - name:
+
+    - name:
+      block:
+        - name:
+        - name:
+
+  when: ansible[][][] ==
+
+- name:
+  block:
+    - name:
+      block:
+        - name:
+        - name:
+
+    - name:
+      block:
+        - name:
+        - name:
+
+  when: ansible[][][] ==
+
+- name:
+  block:
+    - name:
+      block:
+        - name:
+        - name:
+
+    - name:
+      block:
+        - name:
+        - name:
+
+  when: ansible[][][] ==
+
+- name:
+  block:
+    - name:
+      block:
+        - name:
+        - name:
+
+    - name:
+      block:
+        - name:
+        - name:
+
+  when: ansible[][][] ==
+
+- name:
+  block:
+    - name:
+      block:
+        - name:
+        - name:
+
+    - name:
+      block:
+        - name:
+        - name:
+
+  when: ansible[][][] ==
