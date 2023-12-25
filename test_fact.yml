@@ -3,4 +3,4 @@
   tasks:
     - name: 测试fact变量
       debug:
-        msg: "{{ ansible_architecture }}"
+        msg: "{{ ansible_default_ipv4.address }}"

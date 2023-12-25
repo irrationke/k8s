@@ -1,0 +1,78 @@
+---
+# tasks file for init
+- name: 关闭防火墙
+  block:
+    - name: CentOS与openEuler关闭防火墙并禁止自启动
+      systemd:
+        name: firewalld
+        state: stopped
+        enabled: false
+      when: ansible_os_family == "RedHat"
+      # tags: ts
+
+- name: 关闭SELinux
+  block:
+    - name: CentOS与openEuler关闭SELinux
+      selinux:
+        state: disabled
+      when: ansible_os_family == "RedHat"
+
+- name: 关闭交换分区
+  block:
+    # - name: 修改交换分区文件
+    #   lineinfile:
+    #     path: /etc/fstab
+    #     regexp: "*swap*"
+    #     insertafter: "#*swap*"
+    #     state: present
+    #     line: ""
+
+    - name: 关闭交换分区
+      # replace:
+      #   path: /etc/fstab
+      #   regexp: ".*swap.*"
+      #   replace:
+      #   backup: true
+      shell:
+        cmd: "sed -ri 's/.*swap.*/#&/' /etc/fstab && swapoff -a && sysctl -w vm.swappiness=0"
+      # when: not ifswap.stat.exists
+
+- name: CentOS与openEuler网络配置
+  block:
+    - name: CentOS与openEuler取消NetworkManager对于cali*和tunl*的管理
+      template:
+        src: calico.conf.j2
+        dest: /etc/NetworkManager/conf.d/calico.conf
+        backup: yes
+      notify: rs NM
+  when: ansible_os_family == "RedHat"
+
+- name: 时间同步
+  block:
+    - name: 拷贝chrony服务端配置文件
+      template:
+        src: chrony-service.conf.j2
+        dest: /etc/chrony.conf
+        backup: yes
+      notify: rs chrony
+      when: ansible_default_ipv4['address'] == m1
+
+    - name: 拷贝chrony客户端配置文件
+      template:
+        src: chrony-client.conf.j2
+        dest: /etc/chrony.conf
+        backup: yes
+      notify: rs chrony
+      when: ansible_default_ipv4['address'] != m1
+
+- name: 配置ulimit
+  block:
+    - name: 修改最大文件数
+      shell:
+        cmd: "ulimit -SHn 65535"
+
+    - name: 拷贝limits.conf文件
+      template:
+        src: limits.conf.j2
+        dest: /etc/security/limits.conf
+        backup: yes

@@ -1,0 +1,12 @@
+---
+- hosts: ha
+  vars:
+    m1: 192.168.56.101
+    m2: 192.168.56.102
+  tasks:
+    - name: 测试delegate_to模块功能
+      delegate_to: 192.168.56.101
+      copy:
+        src: /root/delegate_to_ts/delegate
+        dest: /root/delegate_to_ts/delegate
+      when: ansible_default_ipv4.address == "192.168.56.102"
