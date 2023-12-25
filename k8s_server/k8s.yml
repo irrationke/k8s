@@ -1,0 +1,15 @@
+---
+- hosts: k8s
+  tasks:
+    - name: 拷贝kubernetes安装文件
+      copy:
+        src: ./{{ item }}
+        dest: /usr/local/bin
+        mode: +x
+      loop:
+        - kube-apiserver
+        - kube-controller-manager
+        - kubectl
+        - kubelet
+        - kube-proxy
+        - kube-scheduler
