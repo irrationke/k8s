@@ -1,0 +1,12 @@
+---
+# handlers file for init
+- name: rs NM
+  systemd:
+    state: restarted
+    name: NetworkManager
+
+- name: rs chrony
+  systemd:
+    state: restarted
+    name: chronyd
+    enabled: true
