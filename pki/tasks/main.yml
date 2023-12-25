@@ -1,46 +1,57 @@
 ---
 # tasks file for pki
-- name: 创建存放etcd证书的目录
-  shell: "mkdir -p /etc/etcd/ssl/"
+- name: 创建存放k8s和etcd证书的目录
+  # shell: "mkdir -p /etc/etcd/ssl/ {{ pik_json }}"
+  file:
+    state: directory
+    path: "{{ item }}"
+  loop:
+    - "{{ pki_dir }}"
+    - "{{ ssl_dir }}"
+  tags: ts1
+
+- name: 创建存放证书配置文件的目录
+  # shell: "mkdir -p /etc/kubernetes/pki"
+  file:
+    state: directory
+    path: "{{ pik_json }}"
+  when: ansible_default_ipv4['address'] == m1
 
 - name: 申请etcd的证书
   block:
     - name: 拷贝CA证书所需的基本配置文件
       template:
         src: ca-config.json.j2
-        dest: /etc/etcd/ssl/ca-config.json
+        dest: "{{ pik_json }}ca-config.json"
 
     - name: etcd的根证书模块
       block:
         - name: 拷贝生成CA证书机构的CSR签名请求文件
           template:
             src: etcd-ca-csr.json.j2
-            dest: /etc/etcd/ssl/etcd-ca-csr.json
+            dest: "{{ pik_json }}etcd-ca-csr.json"
 
         - name: 根据配置文件etcd-ca-csr.json生成一个etcd的CA证书机构(根证书)
           shell:
-            chdir: "/etc/etcd/ssl/"
-            cmd: "cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare /etc/etcd/ssl/etcd-ca"
+            # chdir: "/etc/etcd/ssl/"
+            cmd: "cfssl gencert -initca {{ pik_json }}etcd-ca-csr.json | cfssljson -bare {{ ssl_dir }}etcd-ca"
 
     - name: etcd证书模块
       block:
         - name: 拷贝生成etcd证书签名请求
           template:
             src: etcd-csr.json.j2
-            dest: /etc/etcd/ssl/etcd-csr.json
+            dest: "{{ pik_json }}etcd-csr.json"
 
         - name: 生成etcd证书
           shell:
-            chdir: "/etc/etcd/ssl/"
-            cmd: "cfssl gencert -ca=/etc/etcd/ssl/etcd-ca.pem -ca-key=/etc/etcd/ssl/etcd-ca-key.pem -config=ca-config.json -hostname={{ hostname_pki }} -profile=kubernetes etcd-csr.json | cfssljson -bare /etc/etcd/ssl/etcd"
+            # chdir: "/etc/etcd/ssl/"
+            cmd: "cfssl gencert -ca={{ ssl_dir }}etcd-ca.pem -ca-key={{ ssl_dir }}etcd-ca-key.pem -config={{ pik_json }}ca-config.json -hostname={{ hostname_pki }} -profile=kubernetes {{ pik_json }}etcd-csr.json | cfssljson -bare {{ ssl_dir }}etcd"
           # tags:
 
     # - name: 拷贝证书到其他节点
-
-  when: ansible_default_ipv4['address'] == m1
-
-- name: 创建存放k8s证书的目录
-  shell: "mkdir -p /etc/kubernetes/pki"
+  tags: ts
+  # when: ansible_default_ipv4['address'] == m1
 
 - name: 生成k8s相关证书===>>apiserver证书 .2
   block:
@@ -49,24 +60,24 @@
         - name: 拷贝ca-csr.json文件
           template:
             src: ca-csr.json.j2
-            dest: /etc/kubernetes/pki/ca-csr.json
+            dest: "{{ pik_json }}ca-csr.json"
 
         - name: 生成kubernetes的CA机构证书
           shell:
             chdir: "{{ pki_dir }}"
-            cmd: "cfssl gencert -initca ca-csr.json | cfssljson -bare /etc/kubernetes/pki/ca"
+            cmd: "cfssl gencert -initca {{ pik_json }}ca-csr.json | cfssljson -bare {{ pki_dir }}ca"
 
     - name: Kubernetes API Server证书生成模块
       block:
         - name: 拷贝申请api server证书的配置文件
           template:
             src: apiserver-csr.json.j2
-            dest: /etc/kubernetes/pki/apiserver-csr.json
+            dest: "{{ pik_json }}apiserver-csr.json"
 
         - name: 生成api server证书
           shell:
             chdir: "{{ pki_dir }}"
-            cmd: "cfssl gencert -ca=/etc/kubernetes/pki/ca.pem -ca-key=/etc/kubernetes/pki/ca-key.pem -config=/etc/etcd/ssl/ca-config.json -hostname={{ k8s_pki }} -profile=kubernetes apiserver-csr.json | cfssljson -bare /etc/kubernetes/pki/apiserver"
+            cmd: "cfssl gencert -ca={{ pki_dir }}ca.pem -ca-key={{ pki_dir }}ca-key.pem -config={{ pik_json }}ca-config.json -hostname={{ k8s_pki }} -profile=kubernetes {{ pik_json }}apiserver-csr.json | cfssljson -bare {{ pki_dir }}apiserver"
 
   when: ansible_default_ipv4['address'] == m1
 
@@ -77,24 +88,24 @@
         - name: 拷贝front-proxy-ca-csr.json文件
           template:
             src: front-proxy-ca-csr.json.j2
-            dest: /etc/kubernetes/pki/front-proxy-ca-csr.json
+            dest: "{{ pik_json }}front-proxy-ca-csr.json"
 
         - name: 生成apiserver聚合证书的根证书
           shell:
             chdir: "{{ pki_dir }}"
-            cmd: "cfssl gencert -initca front-proxy-ca-csr.json | cfssljson -bare /etc/kubernetes/pki/front-proxy-ca"
+            cmd: "cfssl gencert -initca {{ pik_json }}front-proxy-ca-csr.json | cfssljson -bare {{ pki_dir }}front-proxy-ca"
 
     - name: apiserver聚合证书生成模块
       block:
         - name: 拷贝front-proxy-client-csr.json文件
           template:
             src: front-proxy-client-csr.json.j2
-            dest: /etc/kubernetes/pki/front-proxy-client-csr.json
+            dest: "{{ pik_json }}front-proxy-client-csr.json"
 
         - name: 生成apiserver聚合证书
           shell:
             chdir: "{{ pki_dir }}"
-            cmd: "cfssl gencert -ca=/etc/kubernetes/pki/front-proxy-ca.pem -ca-key=/etc/kubernetes/pki/front-proxy-ca-key.pem -config=/etc/etcd/ssl/ca-config.json -profile=kubernetes   front-proxy-client-csr.json | cfssljson -bare /etc/kubernetes/pki/front-proxy-client"
+            cmd: "cfssl gencert -ca={{ pki_dir }}front-proxy-ca.pem -ca-key={{ pki_dir }}front-proxy-ca-key.pem -config={{ pik_json }}ca-config.json -profile=kubernetes   {{ pik_json }}front-proxy-client-csr.json | cfssljson -bare {{ pki_dir }}front-proxy-client"
 
   when: ansible_default_ipv4['address'] == m1
 
@@ -105,18 +116,18 @@
         - name: 拷贝manager-csr.json配置文件
           template:
             src: manager-csr.json.j2
-            dest: /etc/kubernetes/pki/manager-csr.json
+            dest: "{{ pik_json }}manager-csr.json"
 
         - name: 生成controller-manage证书
           shell:
-            chdir: "{{ pki_dir }}"
-            cmd: "cfssl gencert -ca=/etc/kubernetes/pki/ca.pem -ca-key=/etc/kubernetes/pki/ca-key.pem -config=/etc/etcd/ssl/ca-config.json -profile=kubernetes manager-csr.json | cfssljson -bare /etc/kubernetes/pki/controller-manager"
+            # chdir: "{{ pki_dir }}"
+            cmd: "cfssl gencert -ca={{ pki_dir }}ca.pem -ca-key={{ pki_dir }}ca-key.pem -config={{ pik_json }}ca-config.json -profile=kubernetes {{ pik_json }}manager-csr.json | cfssljson -bare {{ pki_dir }}controller-manager"
 
     - name: controller-manager环境设置
       block:
         - name: 设置controller-manager的集群项 .4..1
           shell:
-            cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig"
+            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig"
 
         - name: 设置controller-manager的环境项 .4..2
           shell:
@@ -124,7 +135,7 @@
 
         - name: 设置controller-manager的用户项 .4..3
           shell:
-            cmd: "kubectl config set-credentials system:kube-controller-manager --client-certificate=/etc/kubernetes/pki/controller-manager.pem --client-key=/etc/kubernetes/pki/controller-manager-key.pem --embed-certs=true --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig"
+            cmd: "kubectl config set-credentials system:kube-controller-manager --client-certificate={{ pki_dir }}controller-manager.pem --client-key={{ pki_dir }}controller-manager-key.pem --embed-certs=true --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig"
 
         - name: 使用controller-manager.kubeconfig这个配置文件 .4..4
           shell:
@@ -137,25 +148,25 @@
   block:
     - name: 生成kube-scheduler证书模块
       block:
-        - name: 拷贝scheduler-csr.json配置文件
+        - name: 拷贝scheduler-csr.json配置文件 .5..1
           template:
             src: scheduler-csr.json.j2
-            dest: "/etc/kubernetes/pki/scheduler-csr.json"
+            dest: "{{ pik_json }}scheduler-csr.json"
 
-        - name: 生成kube-scheduler的证书
+        - name: 生成kube-scheduler的证书 .5..2
           shell:
             chdir: "{{ pki_dir }}"
-            cmd: "cfssl gencert -ca=/etc/kubernetes/pki/ca.pem -ca-key=/etc/kubernetes/pki/ca-key.pem -config=/etc/etcd/ssl/ca-config.json -profile=kubernetes scheduler-csr.json | cfssljson -bare /etc/kubernetes/pki/scheduler"
+            cmd: "cfssl gencert -ca={{ pki_dir }}ca.pem -ca-key={{ pki_dir }}ca-key.pem -config={{ pik_json }}ca-config.json -profile=kubernetes {{ pik_json }}scheduler-csr.json | cfssljson -bare {{ pki_dir }}scheduler"
 
     - name: scheduler环境设置
       block:
         - name: 设置scheduler的集群项 .5..1
           shell:
-            cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/scheduler.kubeconfig"
+            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/scheduler.kubeconfig"
 
         - name: 设置scheduler的环境项 .5..2
           shell:
-            cmd: "kubectl config set-credentials system:kube-scheduler --client-certificate=/etc/kubernetes/pki/scheduler.pem --client-key=/etc/kubernetes/pki/scheduler-key.pem --embed-certs=true --kubeconfig=/etc/kubernetes/scheduler.kubeconfig"
+            cmd: "kubectl config set-credentials system:kube-scheduler --client-certificate={{ pki_dir }}scheduler.pem --client-key={{ pki_dir }}scheduler-key.pem --embed-certs=true --kubeconfig=/etc/kubernetes/scheduler.kubeconfig"
 
         - name: 设置scheduler的用户项 .5..3
           shell:
@@ -175,22 +186,22 @@
         - name: 拷贝admin-csr.json.j2文件
           template:
             src: admin-csr.json.j2
-            dest: "/etc/kubernetes/pki/admin-csr.json"
+            dest: "{{ pik_json }}admin-csr.json"
 
         - name: 生成admin证书
           shell:
             chdir: "{{ pki_dir }}"
-            cmd: "cfssl gencert -ca=/etc/kubernetes/pki/ca.pem -ca-key=/etc/kubernetes/pki/ca-key.pem -config=/etc/etcd/ssl/ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare /etc/kubernetes/pki/admin"
+            cmd: "cfssl gencert -ca={{ pki_dir }}ca.pem -ca-key={{ pki_dir }}ca-key.pem -config={{ pik_json }}ca-config.json -profile=kubernetes {{ pik_json }}admin-csr.json | cfssljson -bare {{ pki_dir }}admin"
 
     - name: admin环境设置
       block:
         - name: 设置admin的集群项 .6..1
           shell:
-            cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/admin.kubeconfig"
+            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/admin.kubeconfig"
 
         - name: 设置admin的环境项 .6..2
           shell:
-            cmd: "kubectl config set-credentials kubernetes-admin --client-certificate=/etc/kubernetes/pki/admin.pem --client-key=/etc/kubernetes/pki/admin-key.pem --embed-certs=true --kubeconfig=/etc/kubernetes/admin.kubeconfig"
+            cmd: "kubectl config set-credentials kubernetes-admin --client-certificate={{ pki_dir }}admin.pem --client-key={{ pki_dir }}admin-key.pem --embed-certs=true --kubeconfig=/etc/kubernetes/admin.kubeconfig"
 
         - name: 设置admin的用户项 .6..3
           shell:
@@ -207,25 +218,25 @@
   block:
     - name: kube-proxy证书模块
       block:
-        - name: 拷贝kube-proxy-csr.json证书
+        - name: 拷贝kube-proxy-csr.json证书 .7..1
           template:
             src: kube-proxy-csr.json.j2
-            dest: "/etc/kubernetes/pki/kube-proxy-csr.json"
+            dest: "{{ pik_json }}kube-proxy-csr.json"
 
-        - name: 生成kube-proxy证书
+        - name: 生成kube-proxy证书 .7..2
           shell:
             chdir: "{{ pki_dir }}"
-            cmd: "cfssl gencert -ca=/etc/kubernetes/pki/ca.pem -ca-key=/etc/kubernetes/pki/ca-key.pem -config=/etc/etcd/ssl/ca-config.json -profile=kubernetes kube-proxy-csr.json | cfssljson -bare /etc/kubernetes/pki/kube-proxy"
+            cmd: "cfssl gencert -ca={{ pki_dir }}ca.pem -ca-key={{ pki_dir }}ca-key.pem -config={{ pik_json }}ca-config.json -profile=kubernetes {{ pik_json }}kube-proxy-csr.json | cfssljson -bare {{ pki_dir }}kube-proxy"
 
     - name: kube-proxy环境设置
       block:
         - name: 设置kube-proxy的集群项 .7..1
           shell:
-            cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig"
+            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig"
 
         - name: 设置kube-proxy的环境项 .7..2
           shell:
-            cmd: "kubectl config set-credentials kube-proxy --client-certificate=/etc/kubernetes/pki/kube-proxy.pem --client-key=/etc/kubernetes/pki/kube-proxy-key.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig"
+            cmd: "kubectl config set-credentials kube-proxy --client-certificate={{ pki_dir }}kube-proxy.pem --client-key={{ pki_dir }}kube-proxy-key.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig"
 
         - name: 设置kube-proxy的用户项 .7..3
           shell:
@@ -244,11 +255,11 @@
       block:
         - name: 生成私钥文件
           shell:
-            cmd: "openssl genrsa -out /etc/kubernetes/pki/sa.key 2048"
+            cmd: "openssl genrsa -out {{ pki_dir }}sa.key 2048"
 
         - name: 从私钥中导出公钥
           shell:
-            cmd: "openssl rsa -in /etc/kubernetes/pki/sa.key -pubout -out /etc/kubernetes/pki/sa.pub"
+            cmd: "openssl rsa -in {{ pki_dir }}sa.key -pubout -out {{ pki_dir }}sa.pub"
 
   when: ansible_default_ipv4['address'] == m1
 # - name: 发送证书到其他master节点
