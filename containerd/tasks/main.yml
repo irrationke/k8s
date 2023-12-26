@@ -42,6 +42,11 @@
     backup: yes
   notify: reload system
 
+- name: 创建containerd配置文件目录
+  file:
+    path: /etc/containerd
+    state: directory
+
 - name: 拷贝Containerd配置文件
   template:
     src: ./templates/config.toml.j2
