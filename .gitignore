@@ -306,3 +306,5 @@ etcd/etcd-v3.5.10-linux-amd64/Documentation/README.md
 etcd/etcd-v3.5.10-linux-amd64/Documentation/dev-guide/apispec/swagger/rpc.swagger.json
 etcd/etcd-v3.5.10-linux-amd64/Documentation/dev-guide/apispec/swagger/v3election.swagger.json
 etcd/etcd-v3.5.10-linux-amd64/Documentation/dev-guide/apispec/swagger/v3lock.swagger.json
+test_fact.yml
+test_fact.yml
