@@ -49,9 +49,14 @@
             cmd: "cfssl gencert -ca={{ ssl_dir }}etcd-ca.pem -ca-key={{ ssl_dir }}etcd-ca-key.pem -config={{ pik_json }}ca-config.json -hostname={{ hostname_pki }} -profile=kubernetes {{ pik_json }}etcd-csr.json | cfssljson -bare {{ ssl_dir }}etcd"
           # tags:
 
-    # - name: 拷贝证书到其他节点
+    # - name: 拷贝etcd证书到其他节点
+    #   script:
+    #     cmd: './files/etcd_pki.sh'
+      # shell:
+      #   cmd: ""
+
   tags: ts
-  # when: ansible_default_ipv4['address'] == m1
+  when: ansible_default_ipv4['address'] == m1
 
 - name: 生成k8s相关证书===>>apiserver证书 .2
   block:
@@ -262,4 +267,8 @@
             cmd: "openssl rsa -in {{ pki_dir }}sa.key -pubout -out {{ pki_dir }}sa.pub"
 
   when: ansible_default_ipv4['address'] == m1
-# - name: 发送证书到其他master节点
+
+# - name: 发送k8s证书到其他master节点
+#   script:
+#     cmd: "./files/k8s_pki.sh"
+#   when: ansible_default_ipv4['address'] == m1
