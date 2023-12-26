@@ -30,9 +30,16 @@
     - name: 关闭交换分区
       # replace:
       #   path: /etc/fstab
-      #   regexp: ".*swap.*"
-      #   replace:
-      #   backup: true
+      #   regexp: '.*swap.*'
+      #   replace: '# \1'
+      # lineinfile:
+      #   path: /etc/fstab
+      #   regexp: '.*swap.*'
+      #   line: '# \1'
+      #   backrefs: yes
+      #   state: present
+      # tags: ts
+      # when: ansible_default_ipv4['address'] == m1
       shell:
         cmd: "sed -ri 's/.*swap.*/#&/' /etc/fstab && swapoff -a && sysctl -w vm.swappiness=0"
       # when: not ifswap.stat.exists
