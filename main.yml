@@ -1,0 +1,9 @@
+---
+- hosts: k8s
+  remote_user: root
+  # roles:
+  #   - dnf
+  #   - init
+  #   - pki
+  roles:
+    - containerd
