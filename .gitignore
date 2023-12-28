@@ -308,3 +308,5 @@ etcd/etcd-v3.5.10-linux-amd64/Documentation/dev-guide/apispec/swagger/v3election
 etcd/etcd-v3.5.10-linux-amd64/Documentation/dev-guide/apispec/swagger/v3lock.swagger.json
 test_fact.yml
 test_fact.yml
+dnf/files/cfssl_1.6.4_linux_amd64
+dnf/files/cfssljson_1.6.4_linux_amd64
