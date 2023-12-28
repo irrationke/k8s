@@ -1,10 +1,10 @@
 ---
-- hosts: k8s
+- hosts: master
   tasks:
     - name: 删除pki
       file: 
         path: '{{ item }}'
         state: absent
       loop:
-        - /etc/kubernetes
-        - /etc/etcd
+        # - /etc/kubernetes
+        - /etc/etcd/etcd.config.yml

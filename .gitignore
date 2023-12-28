@@ -310,3 +310,6 @@ test_fact.yml
 test_fact.yml
 dnf/files/cfssl_1.6.4_linux_amd64
 dnf/files/cfssljson_1.6.4_linux_amd64
+containerd/files/cri-containerd-cni-1.7.3-linux-amd64.tar.gz
+rm.yml
+main.yml
