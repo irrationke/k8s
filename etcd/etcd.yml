@@ -1,5 +1,5 @@
 ---
-- hosts: k8s
+- hosts: master
   handlers:
     - name: rs etcd
       systemd:
