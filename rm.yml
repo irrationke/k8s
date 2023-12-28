@@ -1,0 +1,10 @@
+---
+- hosts: k8s
+  tasks:
+    - name: 删除pki
+      file: 
+        path: '{{ item }}'
+        state: absent
+      loop:
+        - /etc/kubernetes
+        - /etc/etcd
