@@ -1,11 +1,21 @@
 ---
-- hosts: master
+- hosts: k8s
   remote_user: root
   roles:
     # - dnf
     # - init
     # - containerd
+
+- hosts: master
+  remote_user: root
     - pki
 
-# - hosts: master
-#   remote_user: root
+- hosts: etcd
+  remote_user: root
+  roles:
+    - etcd
+
+- hosts: master
+  remote_user: root
+  roles:
+    - lb
