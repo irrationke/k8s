@@ -132,7 +132,7 @@
       block:
         - name: 设置controller-manager的集群项 .4..1
           shell:
-            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig"
+            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://192.168.1.36:9443 --kubeconfig=/etc/kubernetes/controller-manager.kubeconfig"
 
         - name: 设置controller-manager的环境项 .4..2
           shell:
@@ -167,7 +167,7 @@
       block:
         - name: 设置scheduler的集群项 .5..1
           shell:
-            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/scheduler.kubeconfig"
+            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://192.168.1.36:9443 --kubeconfig=/etc/kubernetes/scheduler.kubeconfig"
 
         - name: 设置scheduler的环境项 .5..2
           shell:
@@ -202,7 +202,7 @@
       block:
         - name: 设置admin的集群项 .6..1
           shell:
-            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/admin.kubeconfig"
+            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://192.168.1.36:9443 --kubeconfig=/etc/kubernetes/admin.kubeconfig"
 
         - name: 设置admin的环境项 .6..2
           shell:
@@ -237,7 +237,7 @@
       block:
         - name: 设置kube-proxy的集群项 .7..1
           shell:
-            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig"
+            cmd: "kubectl config set-cluster kubernetes --certificate-authority={{ pki_dir }}ca.pem --embed-certs=true --server=https://192.168.1.36:9443 --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig"
 
         - name: 设置kube-proxy的环境项 .7..2
           shell:
@@ -268,7 +268,7 @@
 
   when: ansible_default_ipv4['address'] == m1
 
-# - name: 发送k8s证书到其他master节点
-#   script:
-#     cmd: "./files/k8s_pki.sh"
-#   when: ansible_default_ipv4['address'] == m1
+- name: 发送k8s证书到其他master节点
+  script:
+    cmd: "./files/k8s_pki.sh"
+  when: ansible_default_ipv4['address'] == m1
