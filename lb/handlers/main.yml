@@ -1,0 +1,13 @@
+---
+# handlers file for lb
+- name: rs haproxy
+  systemd:
+    name: haproxy
+    enabled: true
+    state: restarted
+
+- name: rs keepalived
+  systemd:
+    name: keepalived
+    enabled: true
+    state: restarted

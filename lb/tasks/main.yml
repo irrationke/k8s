@@ -1,0 +1,37 @@
+---
+# tasks file for lb
+- name: 安装keepalived和haproxy服务
+  dnf:
+    name: "haproxy,keepalived"
+    state: installed
+
+- name: 拷贝haproxy配置文件
+  template:
+    src: haproxy.cfg.j2
+    dest: etc/haproxy/haproxy.cfg
+    backup: yes
+  notify: rs haproxy
+
+- name: 拷贝keepalived配置文件
+  block:
+    - name: 拷贝keepalived master配置文件
+      template:
+        src: keepalived.conf.master.j2
+        dest: /etc/keepalived/keepalived.conf
+        backup: yes
+      when: ansible_default_ipv4['address'] == m1
+
+    - name: 拷贝keepalived backup配置文件
+      template:
+        src: keepalived.conf.backup.j2
+        dest: /etc/keepalived/keepalived.conf
+        backup: yes
+      when: ansible_default_ipv4['address'] != m1
+  notify: rs keepalived
+
+- name: 拷贝健康检查脚本文件
+  template:
+    src: check_apiserver.sh
+    dest: /etc/keepalived/check_apiserver.sh
+    mode: +x
+    backup: yes
