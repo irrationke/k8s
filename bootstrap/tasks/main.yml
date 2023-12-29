@@ -1,0 +1,33 @@
+---
+# tasks file for bootstrap
+- name: 设置集群信息
+  shell:
+    cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://127.0.0.1:8443 --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+
+- name: 设置凭证信息
+  shell:
+    cmd: "kubectl config set-credentials tls-bootstrap-token-user --token=c8ad9c.2e4d610cf3e7426e --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+
+- name: 设置上下文
+  shell:
+    cmd: "kubectl config set-context tls-bootstrap-token-user@kubernetes --cluster=kubernetes --user=tls-bootstrap-token-user --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+
+- name: 使用上下文
+  shell:
+    cmd: "kubectl config use-context tls-bootstrap-token-user@kubernetes --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+
+- name: 创建/root/.kube目录
+  file:
+    state: directory
+    path: /root/.kube
+
+- name: 拷贝dmin.kubeconfig文件
+  copy:
+    remote_src: yes
+    src: /etc/kubernetes/admin.kubeconfig
+    dest: /root/.kube/config
+  when: ansible_default_ipv4.address == "m1"
+
+- name: 创建token
+  shell: 
+    cmd: ""
