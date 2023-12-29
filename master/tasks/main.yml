@@ -1,0 +1,24 @@
+---
+# tasks file for master
+- name: 创建相关目录
+  file:
+    path: "/etc/kubernetes/manifests/,/etc/systemd/system/kubelet.service.d,/var/lib/kubelet,/var/log/kubernetes"
+    state: directory
+
+- name: 拷贝apiserver守护进程文件
+  template:
+    src: kube-apiserver.service.j2
+    dest: /usr/lib/systemd/system/kube-apiserver.service
+  notify: rs apiserver
+
+- name: 拷贝kube-controller-manager守护进程文件
+  template:
+    src: kube-controller-manager.service.j2
+    dest: /usr/lib/systemd/system/kube-controller-manager.service
+  notify: rs manager
+
+- name: 拷贝kube-scheduler守护进程文件
+  template:
+    src: kube-scheduler.service.j2
+    dest: /usr/lib/systemd/system/kube-apiserver.service
+  notify: rs scheduler

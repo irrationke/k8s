@@ -1,0 +1,19 @@
+---
+# handlers file for master
+- name: rs apiserver
+  systemd:
+    name: kube-apiserver
+    enabled: true
+    state: restarted
+
+- name: rs manager
+  systemd:
+    name: kube-controller-manager
+    enabled: true
+    state: restarted
+
+- name: rs scheduler
+  systemd:
+    name: kube-scheduler
+    enabled: true
+    state: restarted
