@@ -1,8 +1,11 @@
 ---
 # tasks file for init
-- name: 关闭防火墙
+- name: 设置主机名称 .1
+  shell: "hostnamectl set-hostname {{ hostname | quote }}"
+
+- name: 关闭防火墙 .2
   block:
-    - name: CentOS与openEuler关闭防火墙并禁止自启动
+    - name: CentOS与openEuler关闭防火墙并禁止自启动 .2.1
       systemd:
         name: firewalld
         state: stopped
@@ -10,14 +13,14 @@
       when: ansible_os_family == "RedHat"
       # tags: ts
 
-- name: 关闭SELinux
+- name: 关闭SELinux .3
   block:
     - name: CentOS与openEuler关闭SELinux
       selinux:
         state: disabled
       when: ansible_os_family == "RedHat"
 
-- name: 关闭交换分区
+- name: 关闭交换分区 .4
   block:
     # - name: 修改交换分区文件
     #   lineinfile:
@@ -27,7 +30,7 @@
     #     state: present
     #     line: ""
 
-    - name: 关闭交换分区
+    - name: 关闭交换分区 .4.1
       # replace:
       #   path: /etc/fstab
       #   regexp: '.*swap.*'
@@ -44,7 +47,7 @@
         cmd: "sed -ri 's/.*swap.*/#&/' /etc/fstab && swapoff -a && sysctl -w vm.swappiness=0"
       # when: not ifswap.stat.exists
 
-- name: CentOS与openEuler网络配置
+- name: CentOS与openEuler网络配置 .5
   block:
     - name: CentOS与openEuler取消NetworkManager对于cali*和tunl*的管理
       template:
@@ -54,9 +57,9 @@
       notify: rs NM
   when: ansible_os_family == "RedHat"
 
-- name: 时间同步
+- name: 时间同步 .6
   block:
-    - name: 拷贝chrony服务端配置文件
+    - name: 拷贝chrony服务端配置文件 .6.1
       template:
         src: chrony-service.conf.j2
         dest: /etc/chrony.conf
@@ -64,7 +67,7 @@
       notify: rs chrony
       when: ansible_default_ipv4['address'] == m1
 
-    - name: 拷贝chrony客户端配置文件
+    - name: 拷贝chrony客户端配置文件 .6.2
       template:
         src: chrony-client.conf.j2
         dest: /etc/chrony.conf
@@ -72,13 +75,13 @@
       notify: rs chrony
       when: ansible_default_ipv4['address'] != m1
 
-- name: 配置ulimit
+- name: 配置ulimit .7
   block:
-    - name: 修改最大文件数
+    - name: 修改最大文件数 .7.1
       shell:
         cmd: "ulimit -SHn 65535"
 
-    - name: 拷贝limits.conf文件
+    - name: 拷贝limits.conf文件 .7.2
       template:
         src: limits.conf.j2
         dest: /etc/security/limits.conf
