@@ -34,5 +34,12 @@
       dnf:
         state: installed
         update_cache: yes
-        name: "systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl"
+        name: "{{ dnf_list }}"
+        # name: ""
+
+    - name: k8s-master01安装sshpass
+      dnf:
+        state: installed
+        name: "sshpass"
+      when: ansible_default_ipv4['address'] == m1
   when: ansible_pkg_mgr == "dnf"
