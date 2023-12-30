@@ -1,6 +1,14 @@
 ---
-- hosts: 192.168.56.102
+- hosts: ll
   tasks:
-    - name: 测试fact变量
+    # - name: 测试fact变量
+    #   debug:
+    #     msg: "{{ ansible_distribution }}"
+    - name:
+      shell:
+        cmd: "crictl --version"
+      register: get_node
+
+    - name:
       debug:
-        msg: "{{ ansible_distribution }}"
+        msg: "{{ get_node['stdout'] }}"
