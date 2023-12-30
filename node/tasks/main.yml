@@ -1,0 +1,42 @@
+---
+# tasks file for node
+- name: 拷贝证书至node节点
+  script:
+    cmd: "node_pki.sh"
+
+- name: kubelet配置 8.2
+  block:
+    - name: 创建相关目录
+      file:
+        state: directory
+        path: "{{ item }}"
+      loop:
+        - /var/lib/kubelet
+        - /var/log/kubernetes
+        - /etc/systemd/system/kubelet.service.d
+        - /etc/kubernetes/manifests/
+
+    - name: 拷贝kubelet守护进程文件
+      template:
+        src: kubelet.service.j2
+        dest: /usr/lib/systemd/system/kubelet.service
+      notify: rl systemctl
+
+    - name: 拷贝kubelet配置文件
+      template:
+        src: kubelet-conf.yml.j2
+        dest: /etc/kubernetes/kubelet-conf.yml
+      notify: rs kubelet
+
+- name: kube-proxy配置 8.3
+  block:
+    - name:
+      template:
+        src: kube-proxy.service.j2
+        dest: /usr/lib/systemd/system/kube-proxy.service
+
+    - name:
+      template:
+        src: kube-proxy.yaml.j2
+        dest: /etc/kubernetes/kube-proxy.yaml
+      notify: rs kube-proxy

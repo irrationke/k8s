@@ -1,0 +1,17 @@
+---
+# handlers file for node
+- name: rl systemctl
+  shell:
+    cmd: "systemctl daemon-reload"
+
+- name: rs kubelet
+  systemd:
+    name: kubelet.service
+    state: restarted
+    enabled: true
+
+- name: rs kube-proxy
+  systemd:
+    name: kube-proxy.service
+    state: restarted
+    enabled: true
