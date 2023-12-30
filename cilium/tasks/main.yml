@@ -1,0 +1,9 @@
+---
+# tasks file for cilium
+- name: 拷贝helm二进制文件
+  copy:
+    src: helm
+    dest: /usr/local/bin/
+
+- name: 安装cilium
+  
