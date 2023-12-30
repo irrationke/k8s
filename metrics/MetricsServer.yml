@@ -1,0 +1,11 @@
+- hosts:
+  tasks:
+    - name: 拷贝components.yaml
+      template:
+        src: ./components.yaml
+        dest: /root/components.yaml
+
+    - name: 部署Metrics-server
+      shell:
+        cmd: "kubectl apply -f components.yaml"
+        chdir: "/root"
