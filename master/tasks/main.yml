@@ -20,5 +20,5 @@
 - name: 拷贝kube-scheduler守护进程文件
   template:
     src: kube-scheduler.service.j2
-    dest: /usr/lib/systemd/system/kube-apiserver.service
+    dest: /usr/lib/systemd/system/kube-scheduler.service
   notify: rs scheduler
