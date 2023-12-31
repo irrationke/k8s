@@ -2,25 +2,38 @@
 - hosts: k8s
   remote_user: root
   roles:
-    # - dnf
+    - dnf
     # - init
     # - containerd
 
-- hosts: master
-  remote_user: root
-    - pki
+# - hosts:
+#     - master
+#   remote_user: root
+#     - pki
 
-- hosts: etcd
+- hosts:
+    - etcd
   remote_user: root
   roles:
     - etcd
 
-- hosts: master
+- hosts:
+    - master
   remote_user: root
   roles:
     - lb
+  tags: lb
 
-- hosts: 192.168.12.31
+- hosts:
+    - master
+  remote_user: root
+  roles:
+    - master
+  tags: m
+
+- hosts:
+    - master
   remote_user: root
   roles:
     - bootstrap
+  tags: boot
