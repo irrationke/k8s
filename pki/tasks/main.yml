@@ -270,5 +270,6 @@
 
 - name: 发送k8s证书到其他master节点
   script:
-    cmd: "./files/k8s_pki.sh"
+    cmd: "k8s_pki.sh"
   when: ansible_default_ipv4['address'] == m1
+  tags: tsp

@@ -2,5 +2,4 @@
 - hosts: k8s
   remote_user: root
   roles:
-    - dnf
     - pki
