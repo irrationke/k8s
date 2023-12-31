@@ -2,12 +2,14 @@
 # handlers file for lb
 - name: rs haproxy
   systemd:
+    daemon_reload: yes
     name: haproxy
     enabled: true
     state: restarted
 
 - name: rs keepalived
   systemd:
+    daemon_reload: yes
     name: keepalived
     enabled: true
     state: restarted

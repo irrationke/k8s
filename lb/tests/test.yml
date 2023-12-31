@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: master
   remote_user: root
   roles:
     - lb

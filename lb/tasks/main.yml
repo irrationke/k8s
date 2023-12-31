@@ -8,7 +8,7 @@
 - name: 拷贝haproxy配置文件
   template:
     src: haproxy.cfg.j2
-    dest: etc/haproxy/haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
     backup: yes
   notify: rs haproxy
 
@@ -27,10 +27,10 @@
         dest: /etc/keepalived/keepalived.conf
         backup: yes
       when: ansible_default_ipv4['address'] != m1
-  notify: rs keepalived
+      notify: rs keepalived
 
 - name: 拷贝健康检查脚本文件
-  template:
+  copy:
     src: check_apiserver.sh
     dest: /etc/keepalived/check_apiserver.sh
     mode: +x
