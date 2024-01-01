@@ -3,6 +3,7 @@
 - name: 拷贝证书至node节点
   script:
     cmd: "node_pki.sh"
+  when: ansible_default_ipv4['address'] == m1
 
 - name: kubelet配置 8.2
   block:
@@ -30,12 +31,12 @@
 
 - name: kube-proxy配置 8.3
   block:
-    - name:
+    - name: 拷贝kube-proxy守护进程文件
       template:
         src: kube-proxy.service.j2
         dest: /usr/lib/systemd/system/kube-proxy.service
 
-    - name:
+    - name: 拷贝kube-proxy.yaml配置文件
       template:
         src: kube-proxy.yaml.j2
         dest: /etc/kubernetes/kube-proxy.yaml
