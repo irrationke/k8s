@@ -1,39 +1,41 @@
 ---
 # tasks file for bootstrap
-- name: 设置集群信息
-  shell:
-    cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://192.168.12.36:8443 --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
-  # when: ansible_default_ipv4.address == m1
+- name: bootstrap设置
+  block:
+    - name: 设置集群信息
+      shell:
+        cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://192.168.12.36:8443 --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+      # when: ansible_default_ipv4.address == m1
 
-- name: 设置凭证信息
-  shell:
-    cmd: "kubectl config set-credentials tls-bootstrap-token-user --token=c8ad9c.2e4d610cf3e7426e --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
-  # when: ansible_default_ipv4.address == m1
+    - name: 设置凭证信息
+      shell:
+        cmd: "kubectl config set-credentials tls-bootstrap-token-user --token=c8ad9c.2e4d610cf3e7426e --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+      # when: ansible_default_ipv4.address == m1
 
-- name: 设置上下文
-  shell:
-    cmd: "kubectl config set-context tls-bootstrap-token-user@kubernetes --cluster=kubernetes --user=tls-bootstrap-token-user --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
-  # when: ansible_default_ipv4.address == m1
+    - name: 设置上下文
+      shell:
+        cmd: "kubectl config set-context tls-bootstrap-token-user@kubernetes --cluster=kubernetes --user=tls-bootstrap-token-user --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+      # when: ansible_default_ipv4.address == m1
 
-- name: 使用上下文
-  shell:
-    cmd: "kubectl config use-context tls-bootstrap-token-user@kubernetes --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
-  # when: ansible_default_ipv4.address == m1
+    - name: 使用上下文
+      shell:
+        cmd: "kubectl config use-context tls-bootstrap-token-user@kubernetes --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+      # when: ansible_default_ipv4.address == m1
 
-- name: 创建/root/.kube目录
-  file:
-    state: directory
-    path: /root/.kube
-  # when: ansible_default_ipv4.address == m1
+    - name: 创建/root/.kube目录
+      file:
+        state: directory
+        path: /root/.kube
+      # when: ansible_default_ipv4.address == m1
 
-- name: 拷贝admin.kubeconfig文件
-  copy:
-    remote_src: yes
-    src: /etc/kubernetes/admin.kubeconfig
-    dest: /root/.kube/config
-  # when: ansible_default_ipv4.address == m1
+    - name: 拷贝admin.kubeconfig文件
+      copy:
+        remote_src: yes
+        src: /etc/kubernetes/admin.kubeconfig
+        dest: /root/.kube/config
+      # when: ansible_default_ipv4.address == m1
 
-- name: 创建token
-  shell:
-    cmd: "kubectl create -f bootstrap.secret.yaml"
-  # when: ansible_default_ipv4.address == m1
+    - name: 创建token
+      shell:
+        cmd: "kubectl create -f bootstrap.secret.yaml"
+  when: ansible_default_ipv4.address == m1
