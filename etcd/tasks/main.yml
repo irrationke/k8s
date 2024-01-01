@@ -31,7 +31,6 @@
     src: /etc/etcd/ssl/*
     dest: /etc/kubernetes/pki/etcd/
 
-
 - name: 创建etcd守护进程服务
   template:
     src: ./etcd.service.j2
