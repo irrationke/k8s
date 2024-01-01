@@ -2,16 +2,24 @@
 - hosts: master
   remote_user: root
   tasks:
-    - name: rs haproxy
-      systemd:
-        daemon_reload: yes
-        name: haproxy
-        enabled: true
-        state: restarted
+    # - name: rs haproxy
+    #   systemd:
+    #     daemon_reload: yes
+    #     name: haproxy
+    #     enabled: true
+    #     state: restarted
 
-    - name: rs keepalived
+    # - name: rs keepalived
+    #   systemd:
+    #     daemon_reload: yes
+    #     name: keepalived
+    #     enabled: true
+    #     state: restarted
+
+    - name: rs etcd
       systemd:
         daemon_reload: yes
-        name: keepalived
+        name: etcd
         enabled: true
         state: restarted
+      tags: etcd
