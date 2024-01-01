@@ -4,9 +4,9 @@ Documentation=https://github.com/kubernetes/kubernetes
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/kube-proxy 
-  --config=/etc/kubernetes/kube-proxy.yaml 
-  --cluster-cidr=172.16.0.0/12,fc00:2222::/112 
+ExecStart=/usr/local/bin/kube-proxy \
+  --config=/etc/kubernetes/kube-proxy.yaml \
+  --cluster-cidr=172.16.0.0/12,fc00:2222::/112 \
   --v=2
 Restart=always
 RestartSec=10s
