@@ -9,9 +9,11 @@
     name: kubelet.service
     state: restarted
     enabled: true
+    daemon_reload: yes
 
 - name: rs kube-proxy
   systemd:
     name: kube-proxy.service
     state: restarted
     enabled: true
+    daemon_reload: yes
