@@ -17,6 +17,20 @@
     path: "{{ pik_json }}"
   when: ansible_default_ipv4['address'] == m1
 
+- name: 拷贝cfssl文件
+  copy:
+    mode: +x
+    src: "cfssl_1.6.4_linux_amd64"
+    dest: /usr/local/bin/cfssl
+  when: ansible_default_ipv4['address'] == m1
+
+- name: 拷贝cfssljson文件
+  copy:
+    mode: +x
+    src: "cfssljson_1.6.4_linux_amd64"
+    dest: /usr/local/bin/cfssljson
+  when: ansible_default_ipv4['address'] == m1
+
 - name: 申请etcd的证书
   block:
     - name: 拷贝CA证书所需的基本配置文件
