@@ -500,3 +500,5 @@ coredns/files/coredns/templates/serviceaccount-autoscaler.yaml
 coredns/files/coredns/templates/serviceaccount.yaml
 coredns/files/coredns/templates/servicemonitor.yaml
 coredns/files/coredns-1.29.0.tgz
+pki/files/cfssljson_1.6.4_linux_amd64
+pki/files/cfssl_1.6.4_linux_amd64
