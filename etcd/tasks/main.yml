@@ -15,11 +15,11 @@
     dest: /etc/etcd/etcd.config.yml
   tags: ts
 
-- name: 创建etcd证书目录
-  file:
-    path: /etc/kubernetes/pki/etcd
-    state: directory
-  tags: ts
+# - name: 创建etcd证书目录
+#   file:
+#     path: /etc/kubernetes/pki/etcd
+#     state: directory
+#   tags: ts
 
 - name: 连接etcd证书目录
   # shell:
@@ -28,8 +28,9 @@
   tags: ts
   file:
     state: link
-    src: /etc/etcd/ssl/*
-    dest: /etc/kubernetes/pki/etcd/
+    src: /etc/etcd/ssl
+    dest: /etc/kubernetes/pki/etcd
+    force: yes
 
 - name: 创建etcd守护进程服务
   template:
