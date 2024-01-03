@@ -15,6 +15,7 @@ ExecStart=/usr/local/bin/kube-apiserver \
       --etcd-servers=https://192.168.12.31:2379,https://192.168.12.32:2379,https://192.168.12.33:2379 \
       --etcd-certfile=/etc/etcd/ssl/etcd.pem  \
       --etcd-keyfile=/etc/etcd/ssl/etcd-key.pem  \
+      --etcd-cafile=/etc/etcd/ssl/etcd-ca.pem  \
       --client-ca-file=/etc/kubernetes/pki/ca.pem  \
       --tls-cert-file=/etc/kubernetes/pki/apiserver.pem  \
       --tls-private-key-file=/etc/kubernetes/pki/apiserver-key.pem  \
