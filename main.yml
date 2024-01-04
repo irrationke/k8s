@@ -7,6 +7,21 @@
     - containerd
   tags: o
 
+- hosts: k8s
+  gather_facts: false
+  vars_files: ./var.yml
+  tasks:
+    - name: 安装libselinux-python3
+      yum:
+        name: "libselinux-python3"
+        state: present
+
+    - name: 编辑hosts文件
+      lineinfile:
+        path: /etc/hosts
+        state: present
+        line: "{{ hosts }}"
+
 - hosts: master
   tasks:
     - name: 拷贝kubernetes安装文件
