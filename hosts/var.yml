@@ -1,2 +1,0 @@
----
-hosts: "\n192.168.12.31 k8s-master01 m1\n192.168.12.32 k8s-master02 m2\n192.168.12.33 k8s-master03 m3\n192.168.12.41 k8s-node01 n1\n192.168.12.42 k8s-node02 n2\n192.168.12.11 lb-vip"
