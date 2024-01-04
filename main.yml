@@ -38,6 +38,12 @@
         - kube-scheduler
   tags: kube
 
+- hosts: 192.168.12.31
+  tasks:
+    - name: k8s-master01配置免密
+      script:
+        cmd: "./ssh/ssh.sh"
+
 - hosts:
     - master
   remote_user: root
