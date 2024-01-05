@@ -1,27 +1,35 @@
 ---
 # tasks file for coredns
-- name: 添加coredns源
-  shell:
-    cmd: "helm repo add coredns https://coredns.github.io/helm"
+- name: 安装CoreDNS插件
+  block:
+    # - name: 添加coredns源
+    #   shell:
+    #     cmd: "helm repo add coredns https://coredns.github.io/helm"
 
-- name: 拉取coredns仓库
-  shell:
-    cmd: "helm pull coredns/coredns"
-    chdir: /root
+    # - name: 拉取coredns仓库
+    #   shell:
+    #     cmd: "helm pull coredns/coredns"
+    #     chdir: /root
 
-- name: 解压coredns
-  unarchive:
-    src: /root/coredns-*.tgz
-    dest: /root
-    remote_src: yse
+    # - name: 解压coredns
+    #   unarchive:
+    #     src: /root/coredns-*.tgz
+    #     dest: /root
+    #     remote_src: yse
 
-- name: 修改ip地址
-  lineinfile:
-    path: "/root/coredns/values.yaml"
-    line: 'clusterIP: "10.96.0.10"'
-    regexp: "# clusterIP:"
+    - name: 拷贝CoreDNS helm包
+      copy:
+        src: coredns
+        dest: /root
 
-- name: 安装coredns
-  shell:
-    cmd: "helm install  coredns ./coredns/ -n kube-system"
-    chdir: "/root"
+    # - name: 修改ip地址
+    #   lineinfile:
+    #     path: "/root/coredns/values.yaml"
+    #     line: 'clusterIP: "10.96.0.10"'
+    #     regexp: "# clusterIP:"
+
+    - name: 安装coredns
+      shell:
+        cmd: "helm install  coredns ./coredns/ -n kube-system"
+        chdir: "/root"
+  when: ansible_default_ipv4.address == m1

@@ -2,7 +2,7 @@
 # tasks file for calico
 - name:
   block:
-    - name:
+    - name: 
       copy:
         src: calico-typha.yaml
         dest: /root/calico.yaml

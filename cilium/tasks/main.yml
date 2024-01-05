@@ -1,37 +1,53 @@
 ---
 # tasks file for cilium
-- name: 拷贝helm二进制文件
-  copy:
-    src: helm
-    dest: /usr/local/bin/
+- name: 安装cilium网络插件
+  block:
+    - name: 拷贝helm二进制文件
+      copy:
+        src: helm
+        dest: /usr/local/bin/
+        mode: +x
 
-- name: 添加cilium源
-  shell:
-    cmd: "helm repo add cilium https://helm.cilium.io"
+    # - name: 添加cilium源
+    #   shell:
+    #     cmd: "helm repo add cilium https://helm.cilium.io"
 
-- name: 拉取cilium仓库
-  shell:
-    cmd: "helm pull cilium/cilium"
-    chdir: "/root"
+    - name: 拷贝cilium helm包
+      copy:
+        src: cilium
+        dest: /root
 
-- name: 解压cilium文件
-  unarchive:
-    src: "/root/cilium-*.tgz"
-    dest: "/root"
-    remote_src: yes
+    # 有外网的做法
+    # - name: 拉取cilium仓库
+    #   shell:
+    #     cmd: "helm pull cilium/cilium"
+    #     chdir: "/root"
 
-- name: 安装cilium
-  shell:
-    cmd: "helm install cilium cilium/cilium --namespace kube-system --set hubble.relay.enabled=true --set hubble.ui.enabled=true --set prometheus.enabled=true --set operator.prometheus.enabled=true --set hubble.enabled=true --set hubble.metrics.enabled='{dns,drop,tcp,flow,port-distribution,icmp,http}' "
-    chdir: "/root/cilium/"
+    # - name: 查找cilium文件
+    #   find:
+    #     paths: /root
+    #     patterns: "cilium-*.tgz"
+    #   register: cilium_archive
 
-- name: 拷贝monitoring-example.yaml
-  copy:
-    src: monitoring-example.yaml
-    dest: "/root"
+    # - name: 解压cilium文件
+    #   unarchive:
+    #     src: /root/{{ item }}
+    #     dest: "/root"
+    #     remote_src: yes
+    #   loop: "{{ cilium_archive.files }}"
 
-- name: 安装监控
-  shell:
-    cmd: "kubectl  apply -f monitoring-example.yaml"
-    chdir: "/root"
+    - name: 安装cilium
+      shell:
+        cmd: "helm install cilium cilium/cilium --namespace kube-system --set hubble.relay.enabled=true --set hubble.ui.enabled=true --set prometheus.enabled=true --set operator.prometheus.enabled=true --set hubble.enabled=true --set hubble.metrics.enabled='{dns,drop,tcp,flow,port-distribution,icmp,http}' "
+        chdir: "/root/cilium/"
 
+    - name: 拷贝monitoring-example.yaml
+      copy:
+        src: monitoring-example.yaml
+        dest: "/root"
+
+    - name: 安装监控
+      shell:
+        cmd: "kubectl  apply -f monitoring-example.yaml"
+        chdir: "/root"
+  when: ansible_default_ipv4.address == m1
