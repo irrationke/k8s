@@ -142,7 +142,7 @@ spec:
         - --requestheader-username-headers=X-Remote-User
         - --requestheader-group-headers=X-Remote-Group
         - --requestheader-extra-headers-prefix=X-Remote-Extra-
-        image: registry.k8s.io/metrics-server/metrics-server:v0.6.4
+        image: m.daocloud.io/registry.k8s.io/metrics-server/metrics-server:v0.6.4
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
