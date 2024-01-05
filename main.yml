@@ -1,4 +1,5 @@
 ---
+# 安装基础软件、进行基础设置、安装containerd作为Runtime
 - hosts: k8s
   remote_user: root
   roles:
@@ -7,6 +8,7 @@
     - containerd
   tags: o
 
+# 设置hosts解析
 - hosts: k8s
   gather_facts: false
   vars_files: ./var.yml
@@ -22,9 +24,10 @@
         state: present
         line: "{{ hosts }}"
 
+# 拷贝master节点二进制文件
 - hosts: master
   tasks:
-    - name: 拷贝kubernetes安装文件
+    - name: 拷贝kubernetes master安装文件
       copy:
         src: ./k8s_server/{{ item }}
         dest: /usr/local/bin
@@ -38,12 +41,28 @@
         - kube-scheduler
   tags: kube
 
+# 拷贝node节点二进制文件
+- hosts: node
+  tasks:
+    - name: 拷贝kubernetes node安装文件
+      copy:
+        src: ./k8s_server/{{ item }}
+        dest: /usr/local/bin
+        mode: +x
+      loop:
+        - kubelet
+        - kube-proxy
+  tags: kube-node
+
+# 设置m1免密
 - hosts: 192.168.12.31
   tasks:
     - name: k8s-master01配置免密
       script:
         cmd: "./ssh/ssh.sh"
+  tags: sh
 
+# 生成集群证书
 - hosts:
     - master
   remote_user: root
@@ -51,6 +70,7 @@
     - pki
   tags: pki
 
+# 安装etcd集群
 - hosts:
     - etcd
   remote_user: root
@@ -58,6 +78,7 @@
     - etcd
   tags: etcd
 
+# 安装kube-apiserver高可用（haproxy、keepalived）
 - hosts:
     - master
   remote_user: root
@@ -65,6 +86,7 @@
     - lb
   tags: lb
 
+# 安装master节点
 - hosts:
     - master
   remote_user: root
@@ -72,6 +94,7 @@
     - master
   tags: m
 
+# 设置RBAC控制
 - hosts:
     - master
   remote_user: root
@@ -79,6 +102,7 @@
     - bootstrap
   tags: boot
 
+# 安装node节点
 - hosts:
     - k8s
   remote_user: root
@@ -87,3 +111,36 @@
   roles:
     - node
   tags: node
+
+# 安装cilium网络插件
+- hosts:
+    - 192.168.12.31
+  vars:
+    m1: 192.168.12.31
+  roles:
+    - cilium
+  tags: cilium
+
+# 安装coreDNS插件
+- hosts:
+    - 192.168.12.31
+  vars:
+    m1: 192.168.12.31
+  roles:
+    - coredns
+  tags: coredns
+
+# 安装Metrics Server
+- hosts:
+    - 192.168.12.31
+  tasks:
+    - name: 拷贝components.yaml
+      template:
+        src: ./metrics/components.yaml
+        dest: /root/components.yaml
+
+    - name: 部署Metrics-server
+      shell:
+        cmd: "kubectl apply -f components.yaml"
+        chdir: "/root"
+  tags: metrics
