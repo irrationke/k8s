@@ -520,3 +520,5 @@ docker/files/docker/docker-proxy
 docker/files/docker/dockerd
 docker/files/docker/runc
 docker/files/docker-24.0.7.tgz
+package/cfssl_1.6.4_linux_amd64
+package/cfssljson_1.6.4_linux_amd64
