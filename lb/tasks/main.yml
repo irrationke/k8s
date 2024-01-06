@@ -2,6 +2,7 @@
 # tasks file for lb
 - name: 安装keepalived和haproxy服务
   dnf:
+    update_cache: yes
     name: "haproxy,keepalived"
     state: installed
 
