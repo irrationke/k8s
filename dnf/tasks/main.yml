@@ -42,4 +42,5 @@
         state: installed
         name: "sshpass"
       when: ansible_default_ipv4['address'] == m1
+      ignore_errors: yes
   when: ansible_pkg_mgr == "dnf"
