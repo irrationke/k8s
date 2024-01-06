@@ -2,7 +2,7 @@
 # tasks file for pki
 - name: 检查pki是否存在
   stat:
-    path: /etc/etcd/ssl/
+    path: /etc/kubernetes/pki_json/ca-config.json
   register: pki_stat
   when: ansible_default_ipv4['address'] == m1
 
@@ -28,14 +28,14 @@
     - name: 拷贝cfssl文件
       copy:
         mode: +x
-        src: "cfssl_1.6.4_linux_amd64"
+        src: "../../package/cfssl_1.6.4_linux_amd64"
         dest: /usr/local/bin/cfssl
       when: ansible_default_ipv4['address'] == m1
 
     - name: 拷贝cfssljson文件
       copy:
         mode: +x
-        src: "cfssljson_1.6.4_linux_amd64"
+        src: "../../package/cfssljson_1.6.4_linux_amd64"
         dest: /usr/local/bin/cfssljson
       when: ansible_default_ipv4['address'] == m1
 
@@ -72,6 +72,7 @@
               # tags:
 
         - name: 拷贝etcd证书到其他节点
+          ignore_errors: yes
           script:
             cmd: "./files/etcd_pki.sh"
           # shell:
@@ -293,6 +294,7 @@
     - name: 发送k8s证书到其他master节点
       script:
         cmd: "k8s_pki.sh"
+      ignore_errors: yes
       when: ansible_default_ipv4['address'] == m1
       tags: tsp
   when: "pki_stat.stat.isreg is not defined"
