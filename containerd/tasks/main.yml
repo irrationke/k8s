@@ -8,6 +8,10 @@
           file:
             path: /opt/cni/bin/
             state: directory
+        - name: 判断cni-plugins是否存在
+          ignore_errors: yes
+          stat:
+            path: /opt/cni/bin/cni-plugins
 
         - name: 解压cni-plugins
           unarchive:
@@ -74,11 +78,18 @@
 
 - name: 配置crictl客户端连接的运行时位置
   block:
+    - name: 判断crictl客户端是否存在
+      ignore_errors: yes
+      stat:
+        path: /usr/bin/crictl
+      register: crictl_stat
+
     - name: 解压crictl客户端
       unarchive:
         copy: yes
         src: ./files/crictl-v1.28.0-linux-amd64.tar.gz
         dest: /usr/bin/
+      when: crictl_stat.stat.isreg is not defined
 
     - name: 拷贝crictl配置文件
       template:
