@@ -26,6 +26,7 @@
   #   cmd: "ln -s /etc/etcd/ssl/* /etc/kubernetes/pki/etcd/"
   # ignore_errors: yes
   tags: ts
+  ignore_errors: yes
   file:
     state: link
     src: /etc/etcd/ssl
