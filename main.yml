@@ -1,4 +1,6 @@
 ---
+# 引入自定义变量文件
+- vars_files: ./var.yml
 # 安装基础软件、进行基础设置、安装containerd作为Runtime
 - hosts: k8s
   remote_user: root
@@ -7,24 +9,6 @@
     - init
     - containerd
   tags: o
-
-# 设置hosts解析
-- hosts: k8s
-  gather_facts: false
-  vars_files: ./var.yml
-  tasks:
-    - name: 判断hosts解析是否添加
-      shell:
-        cmd: "cat /etc/hosts | grep k8s-master01"
-      ignore_errors: yes
-      register: cat_hosts
-
-    - name: 编辑hosts文件
-      lineinfile:
-        path: /etc/hosts
-        state: present
-        line: "{{ hosts }}"
-      when: cat_hosts.stdout == ""
 
 # 拷贝master节点二进制文件
 - hosts: master
@@ -55,15 +39,6 @@
         - kubelet
         - kube-proxy
   tags: kube-node
-
-# 设置m1免密
-- hosts: 192.168.12.31
-  tasks:
-    - name: k8s-master01配置免密
-      ignore_errors: yes
-      script:
-        cmd: "./ssh/ssh.sh"
-  tags: sh
 
 # 生成集群证书
 - hosts:
