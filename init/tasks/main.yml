@@ -1,5 +1,6 @@
 ---
 # tasks file for init
+- vars_files: ../../var.yml
 - name: 设置主机名称 .1
   shell: "hostnamectl set-hostname {{ hostname | quote }}"
 
@@ -86,3 +87,27 @@
         src: limits.conf.j2
         dest: /etc/security/limits.conf
         backup: yes
+
+- name: 配置hosts解析
+  # vars_files: ../../var.yml
+  block:
+    - name: 判断hosts解析是否添加
+      shell:
+        cmd: "cat /etc/hosts | grep k8s-master01"
+      ignore_errors: yes
+      register: cat_hosts
+
+    - name: 编辑hosts文件
+      lineinfile:
+        path: /etc/hosts
+        state: present
+        line: "{{ hosts }}"
+      when: cat_hosts.stdout == ""
+  tags: hs
+
+- name: k8s-master01配置免密
+  ignore_errors: yes
+  script:
+    cmd: "../../ssh/ssh.sh"
+  tags: sh
+  when: ansible_default_ipv4['address'] == m1
