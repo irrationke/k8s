@@ -3,7 +3,7 @@
 - name: 拷贝etcd文件
   copy:
     mode: +x
-    src: ./{{ item }}
+    src: ../../package/{{ item }}
     dest: /usr/local/bin
   loop:
     - etcd
