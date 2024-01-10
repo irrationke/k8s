@@ -30,7 +30,7 @@
     - name: 更新dnf缓存
       shell: "dnf clean all && dnf makecache"
 
-    - name: 安装基本工具
+    - name: 安装基本工具openeuler
       dnf:
         state: installed
         update_cache: yes
@@ -44,3 +44,13 @@
       when: ansible_default_ipv4['address'] == m1
       ignore_errors: yes
   when: ansible_pkg_mgr == "dnf"
+
+- name: ubuntu安装基本包模块
+  block:
+    - name: 安装基本工具ubuntu
+      apt:
+        state: installed
+        update_cache: yes
+        name: "{{ apt_list }}"
+
+  when: ansible_pkg_mgr == "apt"
