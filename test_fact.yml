@@ -1,5 +1,9 @@
 ---
-- hosts: 192.168.12.31
+- hosts:
+    - ll
+  # remote_user: klx
+  vars:
+    - dir: "/k8s/vat.yml"
   tasks:
     # - name: 测试fact变量
     #   debug:
@@ -18,17 +22,21 @@
     #     msg: "{{ ssl.stat.isreg }}"
     #   when: ssl.stat.isreg is not defined
 
-    - name: cat hosts
-      shell:
-        cmd: "cat /etc/hosts | grep k8s-master01"
-      ignore_errors: yes
-      register: cat_hosts
+    # - name: cat hosts
+    #   shell:
+    #     cmd: "cat /etc/hosts | grep k8s-master01"
+    #   ignore_errors: yes
+    #   register: cat_hosts
 
-    - name: 
-      debug:
-        msg: "{{ cat_hosts }}"
+    # - name:
+    #   debug:
+    #     msg: "{{ cat_hosts }}"
 
-    - name: 
+    # - name:
+    #   debug:
+    #     msg: "cat_hosts.stdout为空"
+    #   when: cat_hosts.stdout == ""
+    - name:
       debug:
-        msg: "cat_hosts.stdout为空"
-      when: cat_hosts.stdout == ""
+        msg: "{{ dir }}is file"
+      when: /k8s/vat.yml is exists
