@@ -4,7 +4,7 @@
   block:
     - name: 拷贝helm二进制文件
       copy:
-        src: helm
+        src: ../../package/helm
         dest: /usr/local/bin/
         mode: +x
 
@@ -14,7 +14,7 @@
 
     - name: 拷贝cilium helm包
       copy:
-        src: cilium
+        src: ../../package/cilium
         dest: /root
 
     # 有外网的做法
@@ -43,7 +43,7 @@
 
     - name: 拷贝monitoring-example.yaml
       copy:
-        src: monitoring-example.yaml
+        src: ../../package/monitoring-example.yaml
         dest: "/root"
 
     - name: 安装监控

@@ -19,7 +19,7 @@
 
     - name: 拷贝CoreDNS helm包
       copy:
-        src: coredns
+        src: ../../package/coredns
         dest: /root
 
     # - name: 修改ip地址

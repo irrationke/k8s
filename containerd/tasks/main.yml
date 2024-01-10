@@ -16,14 +16,14 @@
         - name: 解压cni-plugins
           unarchive:
             copy: yes
-            src: ./files/cni-plugins-linux-amd64-v1.3.0.tgz
+            src: ../../package/cni-plugins-linux-amd64-v1.3.0.tgz
             dest: /opt/cni/bin/
       # tags:
 
     - name: 解压cri-containerd-cni
       unarchive:
         copy: yes
-        src: ./files/cri-containerd-cni-1.7.8-linux-amd64.tar.gz
+        src: ../../package/cri-containerd-cni-1.7.8-linux-amd64.tar.gz
         dest: /
       # tags:
 
@@ -87,7 +87,7 @@
     - name: 解压crictl客户端
       unarchive:
         copy: yes
-        src: ./files/crictl-v1.28.0-linux-amd64.tar.gz
+        src: ../../package/crictl-v1.28.0-linux-amd64.tar.gz
         dest: /usr/bin/
       when: crictl_stat.stat.isreg is not defined
 
