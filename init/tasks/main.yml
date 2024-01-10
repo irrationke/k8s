@@ -111,3 +111,27 @@
     cmd: "../../ssh/ssh.sh"
   tags: sh
   when: ansible_default_ipv4['address'] == m1
+
+- name: 拷贝kubernetes master安装文件
+  copy:
+    src: ../../package/{{ item }}
+    dest: /usr/local/bin
+    mode: +x
+  loop:
+    - kube-apiserver
+    - kube-controller-manager
+    - kubectl
+    - kubelet
+    - kube-proxy
+    - kube-scheduler
+  when: ansible_default_ipv4['address'] is subset(master)
+
+- name: 拷贝kubernetes node安装文件
+  copy:
+    src: ../../package/{{ item }}
+    dest: /usr/local/bin
+    mode: +x
+  loop:
+    - kubelet
+    - kube-proxy
+  when: ansible_default_ipv4['address'] is subset(node)

@@ -15,3 +15,6 @@ ssl_dir: /etc/etcd/ssl/
 pik_json: /etc/kubernetes/pki_json/
 
 vip: 192.168.12.36
+
+master: "192.168.12.31 192.168.12.32 192.168.12.33"
+node: "192.168.12.41 192.168.12.42"

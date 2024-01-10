@@ -10,36 +10,6 @@
     - containerd
   tags: o
 
-# 拷贝master节点二进制文件
-- hosts: master
-  tasks:
-    - name: 拷贝kubernetes master安装文件
-      copy:
-        src: ./k8s_server/{{ item }}
-        dest: /usr/local/bin
-        mode: +x
-      loop:
-        - kube-apiserver
-        - kube-controller-manager
-        - kubectl
-        - kubelet
-        - kube-proxy
-        - kube-scheduler
-  tags: kube
-
-# 拷贝node节点二进制文件
-- hosts: node
-  tasks:
-    - name: 拷贝kubernetes node安装文件
-      copy:
-        src: ./k8s_server/{{ item }}
-        dest: /usr/local/bin
-        mode: +x
-      loop:
-        - kubelet
-        - kube-proxy
-  tags: kube-node
-
 # 生成集群证书
 - hosts:
     - master
