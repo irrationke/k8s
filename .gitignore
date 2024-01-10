@@ -583,3 +583,4 @@ package/usr/local/bin/critest
 package/usr/local/bin/ctd-decoder
 package/usr/local/bin/ctr
 package/usr/local/sbin/runc
+package
