@@ -1,4 +1,2 @@
 ---
 # vars file for dnf
-dnf_list: systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl
-m1: 192.168.12.31
