@@ -1,0 +1,1 @@
+../pki/files/etcd_pki.sh

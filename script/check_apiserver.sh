@@ -1,0 +1,1 @@
+../lb/files/check_apiserver.sh

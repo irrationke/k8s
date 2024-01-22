@@ -1,0 +1,1 @@
+../pki/files/k8s_pki.sh
