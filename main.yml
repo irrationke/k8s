@@ -32,30 +32,15 @@
   remote_user: root
   roles:
     - lb
-  tags: lb
-
-# 安装master节点
-- hosts:
+    # 安装master节点
     - master
-  remote_user: root
-  roles:
-    - master
-  tags: m
-
-# 设置RBAC控制
-- hosts:
-    - master
-  remote_user: root
-  roles:
+    # 设置RBAC控制
     - bootstrap
-  tags: boot
 
 # 安装node节点
 - hosts:
     - k8s
   remote_user: root
-  vars:
-    m1: 192.168.12.31
   roles:
     - node
   tags: node
@@ -63,32 +48,11 @@
 # 安装cilium网络插件
 - hosts:
     - 192.168.12.31
-  vars:
-    m1: 192.168.12.31
   roles:
     - cilium
+    # 安装coreDNS插件
+    - coredns
   tags: cilium
 
-# 安装coreDNS插件
-- hosts:
-    - 192.168.12.31
-  vars:
-    m1: 192.168.12.31
-  roles:
-    - coredns
-  tags: coredns
-
 # 安装Metrics Server
-- hosts:
-    - 192.168.12.31
-  tasks:
-    - name: 拷贝components.yaml
-      template:
-        src: ./metrics/components.yaml
-        dest: /root/components.yaml
 
-    - name: 部署Metrics-server
-      shell:
-        cmd: "kubectl apply -f components.yaml"
-        chdir: "/root"
-  tags: metrics
