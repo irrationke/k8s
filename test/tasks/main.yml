@@ -1,2 +1,8 @@
 ---
 # tasks file for test
+
+# 应用yaml到集群
+- name: 
+  kubernetes.core.k8s:
+    state: present
+    src: .yaml
