@@ -108,7 +108,7 @@
 - name: k8s-master01配置免密
   ignore_errors: yes
   script:
-    cmd: "../../ssh/ssh.sh"
+    cmd: "ssh.sh"
   tags: sh
   when: ansible_default_ipv4['address'] == m1
 
