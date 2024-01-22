@@ -1,7 +1,10 @@
 ---
 # 引入自定义变量文件
 - vars_files: ./var.yml
-# 安装基础软件、进行基础设置、安装containerd作为Runtime
+
+# 安装基础软件
+# 进行基础设置
+# 安装containerd作为Runtime
 - hosts: k8s
   remote_user: root
   roles:
@@ -27,14 +30,14 @@
   tags: etcd
 
 # 安装kube-apiserver高可用（haproxy、keepalived）
+# 安装master节点
+# 设置RBAC控制
 - hosts:
     - master
   remote_user: root
   roles:
     - lb
-    # 安装master节点
     - master
-    # 设置RBAC控制
     - bootstrap
 
 # 安装node节点
@@ -45,14 +48,23 @@
     - node
   tags: node
 
-# 安装cilium网络插件
+# 部署cilium网络插件
+# 部署coreDNS插件
 - hosts:
-    - 192.168.12.31
+    - { m1 }
   roles:
     - cilium
-    # 安装coreDNS插件
     - coredns
   tags: cilium
 
-# 安装Metrics Server
+# 部署kubernetes应用（Metrics Server dashboard ingress）
+- hosts:
+    - { m1 }
+  roles:
+    - app
 
+# 部署测试项目
+- hosts:
+    - { m1 }
+  roles:
+    - test
