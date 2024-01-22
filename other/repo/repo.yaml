@@ -1,0 +1,42 @@
+---
+- name: add repo
+  hosts: all
+  become: yes
+  
+  tasks:
+    - name: check if base.repo exists
+      stat:
+        path: /etc/yum.repos.d/base.repo
+      register: file_stat
+
+    - name: add repo base| |||
+      block:
+        - name: add repo base
+          yum_repository:
+            name: base
+            description: 191.168.56.100 repo
+            baseurl: http://192.168.56.100
+            gpgkey: http://192.168.56.100/RPM-GPG-KEY-openEuler
+            gpgcheck: yes
+            enabled: yes
+        
+        - name: input repo
+          shell: "cat /etc/yum.repos.d/base.repo"
+          register: command_result
+
+        - name: display the repo
+          debug:
+            var: command_result.stdout_lines
+      when: not file_stat.stat.exists
+
+    - name: cache
+      block:
+        - name: clean
+          dnf:
+            name: "*"
+            state: absent
+
+        - name: makecache
+          dnf:
+            name: "*"
+            state: present 

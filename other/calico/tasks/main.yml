@@ -1,0 +1,13 @@
+---
+# tasks file for calico
+- name:
+  block:
+    - name: 
+      copy:
+        src: calico-typha.yaml
+        dest: /root/calico.yaml
+    - name:
+      shell:
+        chdir: "/root/"
+        cmd: "kubectl apply -f calico.yaml"
+  when: ansible_default_ipv4['address'] == m1

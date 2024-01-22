@@ -1,0 +1,9 @@
+---
+- name: down repo
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Use sed to replace enable=0 with enable=1
+      command: "sed -i 's/\\(enabled=\\)1/\\10/' /etc/yum.repos.d/openEuler.repo"
+

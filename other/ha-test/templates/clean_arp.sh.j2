@@ -1,0 +1,4 @@
+#!/bin/sh
+VIP=$1
+GATEWAY={{ ansible_default_ipv4.gateway }}    #这个是本机的外网网卡网关地址
+/sbin/arping -I {{ ansible_default_ipv4.interface }} -c 5 -s $VIP $GATEWAY &>/dev/null
