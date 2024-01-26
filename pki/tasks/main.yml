@@ -68,7 +68,7 @@
             - name: 生成etcd证书
               shell:
                 # chdir: "/etc/etcd/ssl/"
-                cmd: "cfssl gencert -ca={{ ssl_dir }}etcd-ca.pem -ca-key={{ ssl_dir }}etcd-ca-key.pem -config={{ pik_json }}ca-config.json -hostname={{ hostname_pki }} -profile=kubernetes {{ pik_json }}etcd-csr.json | cfssljson -bare {{ ssl_dir }}etcd"
+                cmd: "cfssl gencert -ca={{ ssl_dir }}etcd-ca.pem -ca-key={{ ssl_dir }}etcd-ca-key.pem -config={{ pik_json }}ca-config.json -hostname={{ etcd_hosts }} -profile=kubernetes {{ pik_json }}etcd-csr.json | cfssljson -bare {{ ssl_dir }}etcd"
               # tags:
 
         - name: 拷贝etcd证书到其他节点
