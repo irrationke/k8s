@@ -52,6 +52,7 @@
             name: haproxy
             state: restarted
             enabled: true
+            daemon_reload: yes
           when: haproxy.stdout == ""
 
     - name: 检查keepalived守护进程
@@ -67,4 +68,5 @@
             name: keepalived
             state: restarted
             enabled: true
+            daemon_reload: yes
           when: keepalived.stdout == ""

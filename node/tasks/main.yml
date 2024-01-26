@@ -58,6 +58,7 @@
             name: kubelet
             state: restarted
             enabled: true
+            daemon_reload: yes
           when: kubelet.stdout == ""
 
     - name: 检查kube-proxy守护进程
@@ -73,4 +74,5 @@
             name: kube-proxy
             state: restarted
             enabled: true
+            daemon_reload: yes
           when: proxy.stdout == ""

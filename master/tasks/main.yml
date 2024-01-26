@@ -38,6 +38,7 @@
             name: kube-apiserver
             state: restarted
             enabled: true
+            daemon_reload: yes
           when: apiserver.stdout == ""
 
     - name: 检查kube-controller-manager守护进程
@@ -53,6 +54,7 @@
             name: kube-controller-manager
             state: restarted
             enabled: true
+            daemon_reload: yes
           when: controller.stdout == ""
 
     - name: 检查kube-scheduler守护进程
@@ -68,4 +70,5 @@
             name: kube-scheduler
             state: restarted
             enabled: true
+            daemon_reload: yes
           when: scheduler.stdout == ""
