@@ -8,16 +8,19 @@
           file:
             path: /opt/cni/bin/
             state: directory
+
         - name: 判断cni-plugins是否存在
           ignore_errors: yes
           stat:
-            path: /opt/cni/bin/cni-plugins
+            path: /opt/cni/bin/vlan
+          register: vlan
 
         - name: 解压cni-plugins
           unarchive:
             copy: yes
             src: ../../package/cni-plugins-linux-amd64-v1.3.0.tgz
             dest: /opt/cni/bin/
+          when: "vlan.stat.isreg is not defined"
       # tags:
 
     - name: 解压cri-containerd-cni
@@ -105,4 +108,4 @@
 
 - name: 展示crictl info命令结果
   debug:
-    msg: "{{ test_crictl }}"
+    msg: "{{ test_crictl.changed }}"
