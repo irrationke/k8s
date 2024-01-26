@@ -1,6 +1,5 @@
 ---
 # tasks file for init
-- vars_files: ../../var.yml
 - name: 设置主机名称 .1
   shell: "hostnamectl set-hostname {{ hostname | quote }}"
 
@@ -101,7 +100,7 @@
       lineinfile:
         path: /etc/hosts
         state: present
-        line: "{{ hosts }}"
+        line: "{{ hosts_list }}"
       when: cat_hosts.stdout == ""
   tags: hs
 
