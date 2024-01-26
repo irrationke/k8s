@@ -36,3 +36,35 @@
     dest: /etc/keepalived/check_apiserver.sh
     mode: +x
     backup: yes
+
+- name: 检查lb组件是否启动
+  block:
+    - name: 检查haproxy守护进程
+      block:
+        - name: 收集haproxy守护进程信息
+          ignore_errors: yes
+          shell:
+            cmd: "systemctl status haproxy | grep running "
+          register: haproxy
+
+        - name: 启动haproxy守护进程
+          systemd:
+            name: haproxy
+            state: restarted
+            enabled: true
+          when: haproxy.stdout == ""
+
+    - name: 检查keepalived守护进程
+      block:
+        - name: 收集keepalived守护进程信息
+          ignore_errors: yes
+          shell:
+            cmd: "systemctl status keepalived | grep running "
+          register: keepalived
+
+        - name: 启动keepalived守护进程
+          systemd:
+            name: keepalived
+            state: restarted
+            enabled: true
+          when: keepalived.stdout == ""
