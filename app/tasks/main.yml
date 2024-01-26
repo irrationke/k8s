@@ -3,7 +3,7 @@
 - name: 部署Metrics Server
   block:
     - name: 拷贝components.yaml
-      template:
+      copy:
         src: components.yaml
         dest: /root/components.yaml
 
@@ -14,14 +14,23 @@
 
 - name: 部署dashboard
   block:
+    - name: 判断dashboard 包是否存在
+      ignore_errors: yes
+      stat:
+        path: /root/kubernetes-dashboard/values.yaml
+      register: dashboard
+
     - name: 拷贝helm的dashboard chart
       copy:
-        src: ../../package/kubernetes-dashboard-6.0.8.tgz
+        src: ../../package/kubernetes-dashboard
         dest: /root
+      when: "dashboard.stat.isreg is not defined"
 
     - name: 使用helm安装dashboard
       shell:
-        cmd: "helm install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --namespace kube-system"
+        cmd: "helm install kubernetes-dashboard ./kubernetes-dashboard --namespace kube-system"
+        chdir: "/root"
+
     - name: 创建dashboard管理员token
       block:
         - name: 拷贝dashboard-user.yaml服务账户文件
@@ -47,4 +56,4 @@
     - name: 应用ingress
       shell:
         cmd: "kubectl  apply -f deploy.yaml && kubectl  apply -f backend.yaml &&kubectl  apply -f ingress-demo-app.yaml "
-        chdir: /root
+        chdir: /root/ingress/
