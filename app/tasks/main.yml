@@ -37,7 +37,7 @@
   block:
     - name: 拷贝ingress
       copy:
-        src: {}
+        src: "{{ item }}"
         dest: /root/ingress/
       loop:
         - deploy.yaml
