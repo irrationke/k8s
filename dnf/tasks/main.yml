@@ -27,8 +27,8 @@
         enabled: yes
       when: not base_repo.stat.exists
 
-    - name: 更新dnf缓存
-      shell: "dnf clean all && dnf makecache"
+    # - name: 更新dnf缓存
+    #   shell: "dnf clean all && dnf makecache"
 
     - name: 安装基本工具openeuler
       dnf:
@@ -39,6 +39,7 @@
 
     - name: k8s-master01安装sshpass
       dnf:
+        update_cache: yes
         state: installed
         name: "sshpass"
       when: ansible_default_ipv4['address'] == m1
