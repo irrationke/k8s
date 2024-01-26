@@ -4,7 +4,7 @@
   block:
     - name: 设置集群信息
       shell:
-        cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://192.168.12.36:9443 --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+        cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://{{ vip }}:9443 --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
       # when: ansible_default_ipv4.address == m1
 
     - name: 设置凭证信息
@@ -41,6 +41,7 @@
         dest: /root/bootstrap.secret.yaml
 
     - name: 创建token
+      ignore_errors: yes
       shell:
         chdir: "/root"
         cmd: "kubectl create -f bootstrap.secret.yaml"
