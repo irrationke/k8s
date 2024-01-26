@@ -1,19 +1,20 @@
 ---
 # 引入自定义变量文件
-- vars_files: ./var.yml
+# - vars_files: ./var.yml
 
 # 配置密钥登陆
-- hosts: 127.0.0.1
-  remote_user: root
-  tasks:
-    - name: 执行ssh.sh脚本上传公钥
-      script:
-        cmd: "./script/ssh.sh"
+# - hosts: local
+#   vars_files: ./var.yml
+#   tasks:
+#     - name: 执行ssh.sh脚本上传公钥
+#       script:
+#         cmd: "./script/ssh.sh"
 
 # 安装基础软件
 # 进行基础设置
 # 安装containerd作为Runtime
 - hosts: k8s
+  vars_files: ./var.yml
   remote_user: root
   roles:
     - dnf
@@ -22,16 +23,16 @@
   tags: o
 
 # 生成集群证书
-- hosts:
-    - master
+- hosts: master
+  vars_files: ./var.yml
   remote_user: root
   roles:
     - pki
   tags: pki
 
 # 安装etcd集群
-- hosts:
-    - etcd
+- hosts: etcd
+  vars_files: ./var.yml
   remote_user: root
   roles:
     - etcd
@@ -40,8 +41,8 @@
 # 安装kube-apiserver高可用（haproxy、keepalived）
 # 安装master节点
 # 设置RBAC控制
-- hosts:
-    - master
+- hosts: master
+  vars_files: ./var.yml
   remote_user: root
   roles:
     - lb
@@ -49,8 +50,8 @@
     - bootstrap
 
 # 安装node节点
-- hosts:
-    - k8s
+- hosts: k8s
+  vars_files: ./var.yml
   remote_user: root
   roles:
     - node
@@ -58,21 +59,21 @@
 
 # 部署cilium网络插件
 # 部署coreDNS插件
-- hosts:
-    - { m1 }
+- hosts: m1
+  vars_files: ./var.yml
+  remote_user: root
   roles:
     - cilium
     - coredns
   tags: cilium
 
 # 部署kubernetes应用（Metrics Server dashboard ingress）
-- hosts:
-    - { m1 }
+- hosts: m1
+  vars_files: ./var.yml
+  remote_user: root
   roles:
     - app
-
 # 部署测试项目
-- hosts:
-    - { m1 }
-  roles:
-    - test
+# - hosts: "{ m1 }"
+#   roles:
+#     - test
