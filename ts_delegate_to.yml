@@ -1,12 +1,48 @@
 ---
-- hosts: ha
+- hosts: master
   vars:
     m1: 192.168.56.101
     m2: 192.168.56.102
   tasks:
-    - name: 测试delegate_to模块功能
-      delegate_to: 192.168.56.101
-      copy:
-        src: /root/delegate_to_ts/delegate
-        dest: /root/delegate_to_ts/delegate
-      when: ansible_default_ipv4.address == "192.168.56.102"
+    # - name: 检查组件是否启动
+    #   block:
+    #     - name: 收集kube-apiserver守护进程信息
+    #       ignore_errors: yes
+    #       shell:
+    #         cmd: "systemctl status kube-apiserver | grep running"
+    #       register: apiserver
+    #     - systemd:
+    #         name: kube-apiserver
+    #         state: restarted
+    #         enabled: true
+    #       when: apiserver.stdout == ""
+
+    # - name: 检查组件是否启动
+    #   block:
+    #     - name: 收集keepalived守护进程信息
+    #       ignore_errors: yes
+    #       shell:
+    #         cmd: "systemctl status keepalived | grep running "
+    #       register: keepalived
+    #     - systemd:
+    #         name: keepalived
+    #         state: restarted
+    #         enabled: true
+    #       when: keepalived.stdout == ""
+
+    # - name: 判断cni-plugins是否存在
+    #   ignore_errors: yes
+    #   stat:
+    #     path: /opt/cni/bin/vlan
+    #   register: vlan
+    # - debug:
+    #     msg: "{{ vlan }}"
+
+    - name: 编辑hosts文件
+      vars:
+        - "\n192.168.12.31 k8s-master01 m1\n192.168.12.32 k8s-master02 m2\n192.168.12.33 k8s-master03 m3\n192.168.12.41 k8s-node01 n1\n192.168.12.42 k8s-node02 n2\n192.168.12.39 lb-vip {{ test }}"
+        - test: 101.101.10.10
+      lineinfile:
+        path: /etc/hosts
+        state: present
+        line: "{{ hosts_list }}"
