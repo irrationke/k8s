@@ -20,9 +20,9 @@
     - name: 添加base.repo源仓库
       yum_repository:
         name: base
-        description: 192.168.12.30 repo
-        baseurl: http://192.168.12.30
-        gpgkey: http://192.168.12.30/RPM-GPG-KEY-openEuler
+        description: "{{ base }} repo"
+        baseurl: "http://{{ base }}"
+        gpgkey: "http://{{ base }}/RPM-GPG-KEY-openEuler"
         gpgcheck: yes
         enabled: yes
       when: not base_repo.stat.exists
