@@ -1,36 +1,39 @@
 ---
-# hosts文件插入
-hosts_list: "\n192.168.12.31 k8s-master01 m1\n192.168.12.32 k8s-master02 m2\n192.168.12.33 k8s-master03 m3\n192.168.12.41 k8s-node01 n1\n192.168.12.42 k8s-node02 n2\n192.168.12.39 lb-vip"
+# 主节点master01--when判断语句使用
+m1: 192.168.12.31
 
-# 主节点master01
-m1: "192.168.12.31"
+# base 自建yum源仓库地址--dnf角色使用
+base: 192.168.12.30
 
-# openEuler安装应用列表
+# openEuler安装应用列表--dnf角色使用
 dnf_list: systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl
 
-# ubuntu安装应用列表
+# ubuntu安装应用列表--dnf角色使用
 apt_list: wget,psmisc,vim,net-tools,nfs-kernel-server,telnet,lvm2,git,tar,curl
 
-# etcd集群通讯地址
-etcd_hosts: 127.0.0.1,k8s-master01,k8s-master02,k8s-master03,192.168.12.31,192.168.12.32,192.168.12.33,fc00:43f4:1eea:1::10,fc00:43f4:1eea:1::20,fc00:43f4:1eea:1::30,::1
-
-# kubernetes集群通讯地址--vip（192.168.12.39）地址注意更改
-k8s_pki: 192.168.12.39,10.96.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.default.svc.cluster.local,x.oiox.cn,k.oiox.cn,l.oiox.cn,o.oiox.cn,192.168.12.31,192.168.12.32,192.168.12.33,192.168.12.41,192.168.12.42,192.168.12.39,fc00:43f4:1eea:1::10,fc00:43f4:1eea:1::20,fc00:43f4:1eea:1::30,fc00:43f4:1eea:1::40,fc00:43f4:1eea:1::50,fc00:43f4:1eea:1::60,fc00:43f4:1eea:1::70,fc00:43f4:1eea:1::80,fc00:43f4:1eea:1::90,fc00:43f4:1eea:1::100,::1
-
-# kubernetes集群证书目录
-pki_dir: /etc/kubernetes/pki/
-
-# etcd集群证书目录
-ssl_dir: /etc/etcd/ssl/
-
-# 申证配置文件目录
-pik_json: /etc/kubernetes/pki_json/
-
-# 高可用vrrp地址
-vip: 192.168.12.39
+# hosts文件插入--init角色中使用
+hosts_list: "\n192.168.12.31 k8s-master01 m1\n192.168.12.32 k8s-master02 m2\n192.168.12.33 k8s-master03 m3\n192.168.12.41 k8s-node01 n1\n192.168.12.42 k8s-node02 n2\n192.168.12.39 lb-vip"
 
 # master节点地址--init角色中使用
 master: "192.168.12.31 192.168.12.32 192.168.12.33"
 
 # node节点地址--init角色中使用
 node: "192.168.12.41 192.168.12.42"
+
+# etcd集群通讯地址--pki角色使用
+etcd_hosts: 127.0.0.1,k8s-master01,k8s-master02,k8s-master03,192.168.12.31,192.168.12.32,192.168.12.33,fc00:43f4:1eea:1::10,fc00:43f4:1eea:1::20,fc00:43f4:1eea:1::30,::1
+
+# kubernetes集群通讯地址--pki角色使用--vip（192.168.12.39）地址注意更改
+k8s_pki: 192.168.12.39,10.96.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.default.svc.cluster.local,x.oiox.cn,k.oiox.cn,l.oiox.cn,o.oiox.cn,192.168.12.31,192.168.12.32,192.168.12.33,192.168.12.41,192.168.12.42,192.168.12.39,fc00:43f4:1eea:1::10,fc00:43f4:1eea:1::20,fc00:43f4:1eea:1::30,fc00:43f4:1eea:1::40,fc00:43f4:1eea:1::50,fc00:43f4:1eea:1::60,fc00:43f4:1eea:1::70,fc00:43f4:1eea:1::80,fc00:43f4:1eea:1::90,fc00:43f4:1eea:1::100,::1
+
+# kubernetes集群证书目录--pki角色使用
+pki_dir: /etc/kubernetes/pki/
+
+# etcd集群证书目录--pki角色使用
+ssl_dir: /etc/etcd/ssl/
+
+# 申证配置文件目录--pki角色使用
+pik_json: /etc/kubernetes/pki_json/
+
+# 高可用vrrp地址--lb角色中使用
+vip: 192.168.12.39
