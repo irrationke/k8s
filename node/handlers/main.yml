@@ -1,9 +1,5 @@
 ---
 # handlers file for node
-- name: rl systemctl
-  shell:
-    cmd: "systemctl daemon-reload"
-
 - name: rs kubelet
   systemd:
     name: kubelet.service
