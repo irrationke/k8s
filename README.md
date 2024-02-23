@@ -1,10 +1,16 @@
 # ansibel部署k8s
 
-## 本文主要记录各个角色实现的功能
+## 剧本使用方法
 
-目前实现的角色：dnf init containerd pki etcd lb master node cilium coredns app test
+
+
+## 剧本角色清单
+
+目前实现的角色：software init containerd pki etcd lb master node cilium coredns app test
 
 ## 基础环境
+
+剧本开发环境为：Open Euler22.03
 
 https://linux.do/
 
@@ -30,7 +36,7 @@ pod：172.16.0.0/12
 
 
 
-## dnf角色 01
+## software角色 01
 
 实现yum源配置，安装基础工具包
 
