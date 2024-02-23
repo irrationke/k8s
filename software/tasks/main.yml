@@ -1,5 +1,5 @@
 ---
-# tasks file for dnf
+# tasks file for software
 
 - name: openEuler的base.repo源仓库模块
   block:

@@ -16,7 +16,7 @@
   vars_files: ./var.yml
   remote_user: root
   roles:
-    - dnf
+    - software
     - init
     - containerd
   tags: o
