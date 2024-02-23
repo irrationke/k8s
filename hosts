@@ -1,0 +1,38 @@
+[k8s:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+[master:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+[node:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+[etcd:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+
+# 如要添加节点请输入IP与预设的hostname
+# hostname会在后面自动配置主机名时要用到
+
+
+[k8s:children]
+master
+node
+
+[master]
+192.168.12.31 hostname=k8s-master01 
+192.168.12.32 hostname=k8s-master02 
+192.168.12.33 hostname=k8s-master03 
+
+[node]
+192.168.12.41 hostname=k8s-node01 
+192.168.12.42 hostname=k8s-node02 
+
+[etcd]
+192.168.12.31 hostname=k8s-master01 
+192.168.12.32 hostname=k8s-master02 
+192.168.12.33 hostname=k8s-master03 
+
+[m1]
+192.168.12.31
+
