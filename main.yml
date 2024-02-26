@@ -5,9 +5,22 @@
   connection: local
   vars_files: ./var.yml
   tasks:
-    - name: 执行ssh.sh脚本上传公钥
-      script:
-        cmd: "./script/ssh.sh"
+    - name: 创建密钥
+      shell:
+        cmd: "ssh-keygen -f /root/.ssh/id_rsa -P ''"
+      when: public_key is not exists
+    # - name: 执行ssh.sh脚本上传公钥
+    #   script:
+    #     cmd: "./script/ssh.sh"
+
+- hosts: k8s
+  gather_facts: no
+  tasks:
+    - name: 分发公钥到kubernetes集群节点
+      authorized_key:
+        user: root
+        state: present
+        key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
 
 # 安装基础软件
 # 进行基础设置
