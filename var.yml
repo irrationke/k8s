@@ -1,4 +1,7 @@
 ---
+# 公钥路径--when判断
+public_key: /root/.ssh/id_rsa.pub
+
 # 主节点master01--when判断语句使用
 m1: 192.168.12.31
 
