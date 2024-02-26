@@ -37,21 +37,22 @@
   template:
     src: ./etcd.service.j2
     dest: /usr/lib/systemd/system/etcd.service
+  changed_when: yes
   notify: rs etcd
   tags: ts
 
-- name: 检查etcd守护进程
-  block:
-    - name: 收集etcd守护进程信息
-      ignore_errors: yes
-      shell:
-        cmd: "systemctl status etcd | grep running "
-      register: etcd
+# - name: 检查etcd守护进程
+#   block:
+#     - name: 收集etcd守护进程信息
+#       ignore_errors: yes
+#       shell:
+#         cmd: "systemctl status etcd | grep running "
+#       register: etcd
 
-    - name: 启动etcd守护进程
-      systemd:
-        name: etcd
-        state: restarted
-        enabled: true
-        daemon_reload: yes
-      when: etcd.stdout == ""
+#     - name: 启动etcd守护进程
+#       systemd:
+#         name: etcd
+#         state: restarted
+#         enabled: true
+#         daemon_reload: yes
+#       when: etcd.stdout == ""

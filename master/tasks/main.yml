@@ -9,66 +9,69 @@
   template:
     src: kube-apiserver.service.j2
     dest: /usr/lib/systemd/system/kube-apiserver.service
+  changed_when: yes
   notify: rs apiserver
 
 - name: 拷贝kube-controller-manager守护进程文件
   template:
     src: kube-controller-manager.service.j2
     dest: /usr/lib/systemd/system/kube-controller-manager.service
+  changed_when: yes
   notify: rs manager
 
 - name: 拷贝kube-scheduler守护进程文件
   template:
     src: kube-scheduler.service.j2
     dest: /usr/lib/systemd/system/kube-scheduler.service
+  changed_when: yes
   notify: rs scheduler
 
-- name: 检查master组件是否启动
-  block:
-    - name: 检查apiserver守护进程
-      block:
-        - name: 收集apiserver守护进程信息
-          ignore_errors: yes
-          shell:
-            cmd: "systemctl status kube-apiserver | grep running "
-          register: apiserver
+# - name: 检查master组件是否启动
+#   block:
+#     - name: 检查apiserver守护进程
+#       block:
+#         - name: 收集apiserver守护进程信息
+#           ignore_errors: yes
+#           shell:
+#             cmd: "systemctl status kube-apiserver | grep running "
+#           register: apiserver
 
-        - name: 启动apiserver守护进程
-          systemd:
-            name: kube-apiserver
-            state: restarted
-            enabled: true
-            daemon_reload: yes
-          when: apiserver.stdout == ""
+#         - name: 启动apiserver守护进程
+#           systemd:
+#             name: kube-apiserver
+#             state: restarted
+#             enabled: true
+#             daemon_reload: yes
+#           when: apiserver.stdout == ""
 
-    - name: 检查kube-controller-manager守护进程
-      block:
-        - name: 收集kube-controller-manager守护进程信息
-          ignore_errors: yes
-          shell:
-            cmd: "systemctl status kube-controller-manager | grep running "
-          register: controller
+#     - name: 检查kube-controller-manager守护进程
+#       block:
+#         - name: 收集kube-controller-manager守护进程信息
+#           ignore_errors: yes
+#           shell:
+#             cmd: "systemctl status kube-controller-manager | grep running "
+#           register: controller
 
-        - name: 启动kube-controller-manager守护进程
-          systemd:
-            name: kube-controller-manager
-            state: restarted
-            enabled: true
-            daemon_reload: yes
-          when: controller.stdout == ""
+#         - name: 启动kube-controller-manager守护进程
+#           systemd:
+#             name: kube-controller-manager
+#             state: restarted
+#             enabled: true
+#             daemon_reload: yes
+#           when: controller.stdout == ""
 
-    - name: 检查kube-scheduler守护进程
-      block:
-        - name: 收集kube-scheduler守护进程信息
-          ignore_errors: yes
-          shell:
-            cmd: "systemctl status kube-scheduler | grep running "
-          register: scheduler
+#     - name: 检查kube-scheduler守护进程
+#       block:
+#         - name: 收集kube-scheduler守护进程信息
+#           ignore_errors: yes
+#           shell:
+#             cmd: "systemctl status kube-scheduler | grep running "
+#           register: scheduler
 
-        - name: 启动kube-scheduler守护进程
-          systemd:
-            name: kube-scheduler
-            state: restarted
-            enabled: true
-            daemon_reload: yes
-          when: scheduler.stdout == ""
+#         - name: 启动kube-scheduler守护进程
+#           systemd:
+#             name: kube-scheduler
+#             state: restarted
+#             enabled: true
+#             daemon_reload: yes
+#           when: scheduler.stdout == ""

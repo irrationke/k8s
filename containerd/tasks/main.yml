@@ -21,21 +21,18 @@
             src: ../../package/cni-plugins-linux-amd64-v1.3.0.tgz
             dest: /opt/cni/bin/
           when: "vlan.stat.isreg is not defined"
-      # tags:
 
     - name: 解压cri-containerd-cni
       unarchive:
         copy: yes
         src: ../../package/cri-containerd-cni-1.7.8-linux-amd64.tar.gz
         dest: /
-      # tags:
 
 - name: 配置Containerd所需的模块
   template:
     src: ./templates/containerd.conf.j2
     dest: /etc/modules-load.d/containerd.conf
     backup: yes
-  # tags:
 
 - name: 加载内核模块
   systemd:
@@ -47,6 +44,7 @@
     src: ./templates/99-kubernetes-cri.conf.j2
     dest: /etc/sysctl.d/99-kubernetes-cri.conf
     backup: yes
+  changed_when: yes
   notify: reload system
 
 - name: 创建containerd配置文件目录
@@ -69,7 +67,6 @@
       template:
         src: ./templates/hosts.toml.j2
         dest: /etc/containerd/certs.d/docker.io/hosts.toml
-      # tags:
 
 - name: 启动并设置Containerd为开机启动
   block:

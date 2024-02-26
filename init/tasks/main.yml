@@ -45,7 +45,6 @@
       # when: ansible_default_ipv4['address'] == m1
       shell:
         cmd: "sed -ri 's/.*swap.*/#&/' /etc/fstab && swapoff -a && sysctl -w vm.swappiness=0"
-      # when: not ifswap.stat.exists
 
 - name: CentOS与openEuler网络配置 .5
   block:
@@ -64,6 +63,7 @@
         src: chrony-service.conf.j2
         dest: /etc/chrony.conf
         backup: yes
+      changed_when: yes
       notify: rs chrony
       when: ansible_default_ipv4['address'] == m1
 
@@ -72,6 +72,7 @@
         src: chrony-client.conf.j2
         dest: /etc/chrony.conf
         backup: yes
+      changed_when: yes
       notify: rs chrony
       when: ansible_default_ipv4['address'] != m1
 
@@ -88,7 +89,6 @@
         backup: yes
 
 - name: 配置hosts解析
-  # vars_files: ../../var.yml
   block:
     - name: 判断hosts解析是否添加
       shell:

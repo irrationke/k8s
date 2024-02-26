@@ -27,6 +27,7 @@
       template:
         src: kubelet-conf.yml.j2
         dest: /etc/kubernetes/kubelet-conf.yml
+      changed_when: yes
       notify: rs kubelet
 
 - name: kube-proxy配置 8.3
@@ -40,38 +41,39 @@
       template:
         src: kube-proxy.yaml.j2
         dest: /etc/kubernetes/kube-proxy.yaml
+      changed_when: yes
       notify: rs kube-proxy
 
-- name: 检查node组件是否启动
-  block:
-    - name: 检查kubelet守护进程
-      block:
-        - name: 收集kubelet守护进程信息
-          ignore_errors: yes
-          shell:
-            cmd: "systemctl status kubelet | grep running "
-          register: kubelet
+# - name: 检查node组件是否启动
+#   block:
+#     - name: 检查kubelet守护进程
+#       block:
+#         - name: 收集kubelet守护进程信息
+#           ignore_errors: yes
+#           shell:
+#             cmd: "systemctl status kubelet | grep running "
+#           register: kubelet
 
-        - name: 启动kubelet守护进程
-          systemd:
-            name: kubelet
-            state: restarted
-            enabled: true
-            daemon_reload: yes
-          when: kubelet.stdout == ""
+#         - name: 启动kubelet守护进程
+#           systemd:
+#             name: kubelet
+#             state: restarted
+#             enabled: true
+#             daemon_reload: yes
+#           when: kubelet.stdout == ""
 
-    - name: 检查kube-proxy守护进程
-      block:
-        - name: 收集kube-proxy守护进程信息
-          ignore_errors: yes
-          shell:
-            cmd: "systemctl status kube-proxy | grep running "
-          register: proxy
+#     - name: 检查kube-proxy守护进程
+#       block:
+#         - name: 收集kube-proxy守护进程信息
+#           ignore_errors: yes
+#           shell:
+#             cmd: "systemctl status kube-proxy | grep running "
+#           register: proxy
 
-        - name: 启动kubelet守护进程
-          systemd:
-            name: kube-proxy
-            state: restarted
-            enabled: true
-            daemon_reload: yes
-          when: proxy.stdout == ""
+#         - name: 启动kubelet守护进程
+#           systemd:
+#             name: kube-proxy
+#             state: restarted
+#             enabled: true
+#             daemon_reload: yes
+#           when: proxy.stdout == ""
