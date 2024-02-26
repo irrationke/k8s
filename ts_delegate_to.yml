@@ -4,18 +4,23 @@
     m1: 192.168.56.101
     m2: 192.168.56.102
   tasks:
-    # - name: 检查组件是否启动
-    #   block:
-    #     - name: 收集kube-apiserver守护进程信息
-    #       ignore_errors: yes
-    #       shell:
-    #         cmd: "systemctl status kube-apiserver | grep running"
-    #       register: apiserver
-    #     - systemd:
-    #         name: kube-apiserver
-    #         state: restarted
-    #         enabled: true
-    #       when: apiserver.stdout == ""
+    - name: 检查组件是否启动
+      block:
+        - name: 收集kube-apiserver守护进程信息
+          ignore_errors: yes
+          shell:
+            cmd: "systemctl status {{item}} | grep running"
+          loop:
+            - kube-apiserver
+            - keepalived
+          register: apiserver
+        - debug:
+            msg: "{{ apiserver }}"
+        # - systemd:
+        #     name: kube-apiserver
+        #     state: restarted
+        #     enabled: true
+        #   when: apiserver.stdout == ""
 
     # - name: 检查组件是否启动
     #   block:
@@ -38,11 +43,11 @@
     # - debug:
     #     msg: "{{ vlan }}"
 
-    - name: 编辑hosts文件
-      vars:
-        - "\n192.168.12.31 k8s-master01 m1\n192.168.12.32 k8s-master02 m2\n192.168.12.33 k8s-master03 m3\n192.168.12.41 k8s-node01 n1\n192.168.12.42 k8s-node02 n2\n192.168.12.39 lb-vip {{ test }}"
-        - test: 101.101.10.10
-      lineinfile:
-        path: /etc/hosts
-        state: present
-        line: "{{ hosts_list }}"
+    # - name: 编辑hosts文件
+    #   vars:
+    #     - "\n192.168.12.31 k8s-master01 m1\n192.168.12.32 k8s-master02 m2\n192.168.12.33 k8s-master03 m3\n192.168.12.41 k8s-node01 n1\n192.168.12.42 k8s-node02 n2\n192.168.12.39 lb-vip {{ test }}"
+    #     - test: 101.101.10.10
+    #   lineinfile:
+    #     path: /etc/hosts
+    #     state: present
+    #     line: "{{ hosts_list }}"
