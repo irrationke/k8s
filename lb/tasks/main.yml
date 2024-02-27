@@ -44,10 +44,10 @@
     backup: yes
 
 - name: 等待VIP上线
-  connetcion: local
+  delegate_to: localhost
   wait_for:
-    host: {{ vip }}
-    port: {{ vip_port }}
+    host: "{{ vip }}"
+    port: "{{ vip_port }}"
     timeout: 60
 
 # - name: 检查lb组件是否启动
