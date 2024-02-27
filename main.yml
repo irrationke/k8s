@@ -2,90 +2,73 @@
 # 配置密钥登陆
 - hosts: localhost
   gather_facts: no
-  connection: local
   vars_files: ./var.yml
   tasks:
-    - name: 创建密钥
-      shell:
-        cmd: "ssh-keygen -f /root/.ssh/id_rsa -P ''"
-      when: public_key is not exists
     # - name: 执行ssh.sh脚本上传公钥
     #   script:
     #     cmd: "./script/ssh.sh"
 
 - hosts: k8s
+  vars_files: ./var.yml
   gather_facts: no
   tasks:
+    - name: 创建密钥
+      # delegate_to: localhost
+      connection: local
+      shell:
+        cmd: "ssh-keygen -f /root/.ssh/id_rsa -P ''"
+      when: public_key is not exists
+
     - name: 分发公钥到kubernetes集群节点
+      ignore_errors: yes
       authorized_key:
         user: root
         state: present
         key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
 
-# 安装基础软件
-# 进行基础设置
-# 安装containerd作为Runtime
-- hosts: k8s
+- name: 安装基础软件、进行基础设置、安装containerd作为Runtime
+  hosts: k8s
   vars_files: ./var.yml
   remote_user: root
   roles:
     - software
     - init
     - containerd
-  tags: o
 
-# 生成集群证书
-- hosts: master
+- name: 生成集群证书、安装etcd集群、安装kube-apiserver高可用（haproxy、keepalived）、安装master节点、设置RBAC控制
+  hosts: master
   vars_files: ./var.yml
   remote_user: root
   roles:
     - pki
-  tags: pki
-
-# 安装etcd集群
-- hosts: etcd
-  vars_files: ./var.yml
-  remote_user: root
-  roles:
     - etcd
-  tags: etcd
-
-# 安装kube-apiserver高可用（haproxy、keepalived）
-# 安装master节点
-# 设置RBAC控制
-- hosts: master
-  vars_files: ./var.yml
-  remote_user: root
-  roles:
     - lb
     - master
     - bootstrap
 
-# 安装node节点
-- hosts: k8s
+- name: 安装node节点
+  hosts: k8s
   vars_files: ./var.yml
   remote_user: root
   roles:
     - node
-  tags: node
 
-# 部署cilium网络插件
-# 部署coreDNS插件
-- hosts: m1
+- name: 部署cilium网络插件、部署coreDNS插件
+  hosts: m1
   vars_files: ./var.yml
   remote_user: root
   roles:
     - cilium
     - coredns
-  tags: cilium
 
-# 部署kubernetes应用（Metrics Server dashboard ingress）
-- hosts: m1
+- name: 部署kubernetes应用(Metrics Server、 dashboard)
+  hosts: m1
   vars_files: ./var.yml
   remote_user: root
   roles:
     - app
-# 部署测试项目
-# - hosts: "{ m1 }"
+#
+# - name: 部署测试项目
+#   hosts: "{ m1 }"
 #   roles:
 #     - test
