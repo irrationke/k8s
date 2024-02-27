@@ -42,18 +42,18 @@
           shell:
             cmd: "kubectl  apply -f dashboard-user.yaml"
 
-- name: 部署ingress
-  block:
-    - name: 拷贝ingress
-      copy:
-        src: "{{ item }}"
-        dest: /root/ingress/
-      loop:
-        - deploy.yaml
-        - backend.yaml
-        - ingress-demo-app.yaml
+# - name: 部署ingress
+#   block:
+#     - name: 拷贝ingress
+#       copy:
+#         src: "{{ item }}"
+#         dest: /root/ingress/
+#       loop:
+#         - deploy.yaml
+#         - backend.yaml
+#         - ingress-demo-app.yaml
 
-    - name: 应用ingress
-      shell:
-        cmd: "kubectl  apply -f deploy.yaml && kubectl  apply -f backend.yaml &&kubectl  apply -f ingress-demo-app.yaml "
-        chdir: /root/ingress/
+#     - name: 应用ingress
+#       shell:
+#         cmd: "kubectl  apply -f deploy.yaml && kubectl  apply -f backend.yaml &&kubectl  apply -f ingress-demo-app.yaml "
+#         chdir: /root/ingress/
