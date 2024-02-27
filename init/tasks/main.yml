@@ -10,7 +10,7 @@
         name: firewalld
         state: stopped
         enabled: false
-      when: ansible_os_family == "RedHat"
+      when: ansible_distribution == "openEuler"
       # tags: ts
 
 - name: 关闭SELinux .3
@@ -18,7 +18,7 @@
     - name: CentOS与openEuler关闭SELinux
       selinux:
         state: disabled
-      when: ansible_os_family == "RedHat"
+      when: ansible_distribution == "openEuler"
 
 - name: 关闭交换分区 .4
   block:
@@ -54,7 +54,7 @@
         dest: /etc/NetworkManager/conf.d/calico.conf
         backup: yes
       notify: rs NM
-  when: ansible_os_family == "RedHat"
+  when: ansible_distribution == "openEuler"
 
 - name: 时间同步 .6
   block:
