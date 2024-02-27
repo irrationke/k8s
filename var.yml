@@ -40,3 +40,25 @@ pik_json: /etc/kubernetes/pki_json/
 
 # 高可用vrrp地址--lb角色中使用
 vip: 192.168.12.39
+
+# 高可用vrrp地址端口号--lb角色中使用
+vip_port: 9443
+
+# service资源ip范围--master角色
+svc_cidr: 10.96.0.0/12,fd00:1111::/112
+
+# service资源类型NodePort端口范围--master角色
+node_port: 30000-32767
+
+# 集群CIDR范围--master角色
+cluster_cidr: 172.16.0.0/12,fc00:2222::/112
+
+# 集群DNS地址--node角色
+cluster_dns: 10.96.0.10
+
+
+
+
+
+
+
