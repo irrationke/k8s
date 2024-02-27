@@ -24,8 +24,8 @@ frontend monitor-in
  monitor-uri /monitor
 
 frontend k8s-master
- bind 0.0.0.0:9443
- bind 127.0.0.1:9443
+ bind 0.0.0.0:{{ vip_port }}
+ bind 127.0.0.1:{{ vip_port }}
  mode tcp
  option tcplog
  tcp-request inspect-delay 5s
@@ -38,6 +38,6 @@ backend k8s-master
  option tcp-check
  balance roundrobin
  default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
- server  k8s-master01  192.168.12.31:6443 check
- server  k8s-master02  192.168.12.32:6443 check
- server  k8s-master03  192.168.12.33:6443 check
+ server  k8s-master01  {{ groups['master'][0] }}:6443 check
+ server  k8s-master02  {{ groups['master'][1] }}:6443 check
+ server  k8s-master03  {{ groups['master'][2] }}:6443 check

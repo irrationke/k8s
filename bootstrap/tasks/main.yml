@@ -4,7 +4,7 @@
   block:
     - name: 设置集群信息
       shell:
-        cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://{{ vip }}:9443 --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+        cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://{{ vip }}:{{ vip_port }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
       # when: ansible_default_ipv4.address == m1
 
     - name: 设置凭证信息
