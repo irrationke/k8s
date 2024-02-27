@@ -26,6 +26,8 @@
   changed_when: yes
   notify: rs scheduler
 
+- meta: flush_handlers
+
 # - name: 检查master组件是否启动
 #   block:
 #     - name: 检查apiserver守护进程
