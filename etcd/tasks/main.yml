@@ -41,6 +41,8 @@
   notify: rs etcd
   tags: ts
 
+- meta: flush_handlers
+
 # - name: 检查etcd守护进程
 #   block:
 #     - name: 收集etcd守护进程信息
