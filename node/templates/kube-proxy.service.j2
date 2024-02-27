@@ -6,7 +6,7 @@ After=network.target
 [Service]
 ExecStart=/usr/local/bin/kube-proxy \
   --config=/etc/kubernetes/kube-proxy.yaml \
-  --cluster-cidr=172.16.0.0/12,fc00:2222::/112 \
+  --cluster-cidr={{ cluster_cidr }} \
   --v=2
 Restart=always
 RestartSec=10s

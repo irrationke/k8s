@@ -19,7 +19,7 @@ authorization:
 cgroupDriver: systemd
 cgroupsPerQOS: true
 clusterDNS:
-- 10.96.0.10
+- {{ cluster_dns }}
 clusterDomain: cluster.local
 containerLogMaxFiles: 5
 containerLogMaxSize: 10Mi
