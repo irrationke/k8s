@@ -1,14 +1,22 @@
 [k8s:vars]
 ansible_python_interpreter=/usr/bin/python3
+ansible_user=root
+ansible_pass=klx-=890
 
 [master:vars]
 ansible_python_interpreter=/usr/bin/python3
+ansible_user=root
+ansible_pass=klx-=890
 
 [node:vars]
 ansible_python_interpreter=/usr/bin/python3
+ansible_user=root
+ansible_pass=klx-=890
 
 [etcd:vars]
 ansible_python_interpreter=/usr/bin/python3
+ansible_user=root
+ansible_pass=klx-=890
 
 
 # 如要添加节点请输入IP与预设的hostname
