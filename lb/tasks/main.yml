@@ -34,12 +34,22 @@
       changed_when: yes
       notify: rs keepalived
 
+    - meta: flush_handlers
+
 - name: 拷贝健康检查脚本文件
   copy:
     src: check_apiserver.sh
     dest: /etc/keepalived/check_apiserver.sh
     mode: +x
     backup: yes
+
+- name: 等待VIP上线
+  connetcion: local
+  wait_for:
+    host: {{ vip }}
+    port: {{ vip_port }}
+    timeout: 60
+
 # - name: 检查lb组件是否启动
 #   block:
 #     - name: 检查haproxy守护进程
