@@ -1,7 +1,9 @@
 ---
 # tasks file for init
 - name: 设置主机名称 .1
-  shell: "hostnamectl set-hostname {{ hostname | quote }}"
+  hostname:
+    name: {{ item }}
+  loop: "{{ hostname | quote}}"
 
 - name: 关闭防火墙 .2
   block:
