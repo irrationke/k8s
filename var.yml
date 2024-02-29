@@ -9,7 +9,7 @@ m1: 192.168.12.31
 base: 192.168.12.30
 
 # openEuler安装应用列表--dnf角色使用
-dnf_list: systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl
+dnf_list: systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl,htop,tree
 
 # ubuntu安装应用列表--dnf角色使用
 apt_list: wget,psmisc,vim,net-tools,nfs-kernel-server,telnet,lvm2,git,tar,curl
@@ -52,6 +52,12 @@ node_port: 30000-32767
 
 # 集群CIDR范围--master角色
 cluster_cidr: 172.16.0.0/12,fc00:2222::/112
+
+# bootstrap-token-id集群引导token--bootstrap角色
+bootstrap-token-id: f3d7eba
+
+# bootstrap-token-secret集群引导token--bootstrap角色
+bootstrap-token-secret: 6e9e7a5aa08
 
 # 集群DNS地址--node角色
 cluster_dns: 10.96.0.10
