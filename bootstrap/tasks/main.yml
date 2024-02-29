@@ -9,7 +9,7 @@
 
     - name: 设置凭证信息
       shell:
-        cmd: "kubectl config set-credentials tls-bootstrap-token-user --token=c8ad9c.2e4d610cf3e7426e --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+        cmd: "kubectl config set-credentials tls-bootstrap-token-user --token={{ bootstrap-token-id }}.{{ bootstrap-token-secret }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
       # when: ansible_default_ipv4.address == m1
 
     - name: 设置上下文
@@ -35,9 +35,9 @@
         dest: /root/.kube/config
       # when: ansible_default_ipv4.address == m1
 
-    - name: 拷贝bootstrap.secret.yaml文件
-      copy:
-        src: bootstrap.secret.yaml
+    - name: 生成bootstrap.secret.yaml文件
+      template:
+        src: bootstrap.secret.yaml.j2
         dest: /root/bootstrap.secret.yaml
 
     - name: 创建token
