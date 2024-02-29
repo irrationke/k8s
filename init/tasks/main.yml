@@ -2,8 +2,7 @@
 # tasks file for init
 - name: 设置主机名称 .1
   hostname:
-    name: {{ item }}
-  loop: "{{ hostname | quote}}"
+    name: "{{ hostname | quote }}"
 
 - name: 关闭防火墙 .2
   block:
@@ -24,29 +23,16 @@
 
 - name: 关闭交换分区 .4
   block:
-    # - name: 修改交换分区文件
-    #   lineinfile:
-    #     path: /etc/fstab
-    #     regexp: "*swap*"
-    #     insertafter: "#*swap*"
-    #     state: present
-    #     line: ""
+    - name: 注释fstab中的交换分区配置 .4.1
+      replace:
+        path: /etc/fstab
+        regexp: "^(.*swap.*)$"
+        replace: '# \1'
+        backup: yes
 
-    - name: 关闭交换分区 .4.1
-      # replace:
-      #   path: /etc/fstab
-      #   regexp: '.*swap.*'
-      #   replace: '# \1'
-      # lineinfile:
-      #   path: /etc/fstab
-      #   regexp: '.*swap.*'
-      #   line: '# \1'
-      #   backrefs: yes
-      #   state: present
-      # tags: ts
-      # when: ansible_default_ipv4['address'] == m1
+    - name: 关闭交换分区并禁用系统的交换分区策略
       shell:
-        cmd: "sed -ri 's/.*swap.*/#&/' /etc/fstab && swapoff -a && sysctl -w vm.swappiness=0"
+        cmd: "swapoff -a && sysctl -w vm.swappiness=0"
 
 - name: CentOS与openEuler网络配置 .5
   block:
