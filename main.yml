@@ -82,5 +82,6 @@
     - name: 添加etcd别名
       lineinfile:
         path: /root/.bashrc
-        line: "alias ectl='etcdctl --endpoints='{{ groups['master'][0] }}:2379,{{ groups['master'][1] }}:2379,{{ groups['master'][2] }}:2379' --cacert=/etc/kubernetes/pki/etcd/etcd-ca.pem --cert=/etc/kubernetes/pki/etcd/etcd.pem --key=/etc/kubernetes/pki/etcd/etcd-key.pem"
+        line: "alias ectl='etcdctl --endpoints='{{ groups['master'][0] }}:2379,{{ groups['master'][1] }}:2379,{{ groups['master'][2] }}:2379' --cacert=/etc/kubernetes/pki/etcd/etcd-ca.pem --cert=/etc/kubernetes/pki/etcd/etcd.pem --key=/etc/kubernetes/pki/etcd/etcd-key.pem'"
         insertafter: EOF
+    - shell: "source /root/.bashrc"
