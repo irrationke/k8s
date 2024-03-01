@@ -9,7 +9,7 @@
 
     - name: 设置凭证信息
       shell:
-        cmd: "kubectl config set-credentials tls-bootstrap-token-user --token={{ bootstrap-token-id }}.{{ bootstrap-token-secret }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+        cmd: "kubectl config set-credentials tls-bootstrap-token-user --token={{ bootstrap_token_id }}.{{ bootstrap_token_secret }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
       # when: ansible_default_ipv4.address == m1
 
     - name: 设置上下文

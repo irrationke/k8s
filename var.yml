@@ -38,6 +38,12 @@ ssl_dir: /etc/etcd/ssl/
 # 申证配置文件目录--pki角色使用
 pik_json: /etc/kubernetes/pki_json/
 
+# etcd集群数据目录
+etcd_data_dir: /var/lib/etcd
+
+# etcd集群数据目录
+etcd_wal_dir: /var/lib/etcd/wal
+
 # 高可用vrrp地址--lb角色中使用
 vip: 192.168.12.39
 
@@ -53,11 +59,11 @@ node_port: 30000-32767
 # 集群CIDR范围--master角色
 cluster_cidr: 172.16.0.0/12,fc00:2222::/112
 
-# bootstrap-token-id集群引导token--bootstrap角色
-bootstrap-token-id: f3d7eba
+# bootstrap_token_id集群引导token--bootstrap角色
+bootstrap_token_id: f3d7eba
 
-# bootstrap-token-secret集群引导token--bootstrap角色
-bootstrap-token-secret: 6e9e7a5aa08
+# bootstrap_token_secret集群引导token--bootstrap角色
+bootstrap_token_secret: 6e9e7a5aa08
 
 # 集群DNS地址--node角色
 cluster_dns: 10.96.0.10

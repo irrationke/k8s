@@ -1,6 +1,6 @@
 name: '{{ ansible_hostname }}'
-data-dir: /var/lib/etcd
-wal-dir: /var/lib/etcd/wal
+data-dir: {{ etcd_data_dir }}
+wal-dir: {{ etcd_wal_dir }}
 snapshot-count: 5000
 heartbeat-interval: 100
 election-timeout: 1000
