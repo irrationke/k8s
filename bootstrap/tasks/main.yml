@@ -44,5 +44,5 @@
       ignore_errors: yes
       shell:
         chdir: "/root"
-        cmd: "kubectl create -f bootstrap.secret.yaml"
+        cmd: "kubectl replace --force -f ./bootstrap.secret.yaml"
   when: ansible_default_ipv4.address == m1
