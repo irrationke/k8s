@@ -1,2 +1,5 @@
 ---
 # defaults file for master
+svc_cidr: 10.96.0.0/12,fd00:1111::/112
+node_port: 30000-32767
+cluster_cidr: 172.16.0.0/12,fc00:2222::/112
