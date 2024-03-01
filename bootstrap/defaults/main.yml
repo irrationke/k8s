@@ -1,2 +1,4 @@
 ---
 # defaults file for bootstrap
+bootstrap_token_id: f3d7eba
+bootstrap_token_secret: 6e9e7a5aa08
