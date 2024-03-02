@@ -38,6 +38,12 @@ ssl_dir: /etc/etcd/ssl/
 # 申证配置文件目录--pki角色使用
 pik_json: /etc/kubernetes/pki_json/
 
+# 证书的ST字段--pki角色使用
+ST: Fujian
+
+# 证书的L字段--pki角色使用
+L: Fujian
+
 # etcd集群数据目录
 etcd_data_dir: /var/lib/etcd
 

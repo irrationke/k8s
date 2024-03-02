@@ -5,3 +5,4 @@ k8s_pki: 192.168.12.39,10.96.0.1,127.0.0.1,kubernetes,kubernetes.default,kuberne
 pki_dir: /etc/kubernetes/pki/
 ssl_dir: /etc/etcd/ssl/
 pik_json: /etc/kubernetes/pki_json/
+ST_L: Fujian
