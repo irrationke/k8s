@@ -35,6 +35,11 @@
         dest: /root/.kube/config
       # when: ansible_default_ipv4.address == m1
 
+    - name: 发送admin.kubeconfig到控制机
+      fetch:
+        src: /root/.kube/config
+        dest: /root/.kube/config
+
     - name: 生成bootstrap.secret.yaml文件
       template:
         src: bootstrap.secret.yaml.j2
