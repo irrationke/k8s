@@ -1,5 +1,5 @@
 ---
 # defaults file for software
 base: 192.168.12.30
-dnf_list: systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl,htop,tree
+dnf_list: systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl,htop,tree,bash-completion
 apt_list: wget,psmisc,vim,net-tools,nfs-kernel-server,telnet,lvm2,git,tar,curl
