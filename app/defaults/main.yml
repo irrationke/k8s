@@ -1,2 +1,4 @@
 ---
 # defaults file for app
+nfs_ip: 192.168.12.30
+nfs_dir: /kubernetes/
