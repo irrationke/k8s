@@ -42,6 +42,45 @@
           shell:
             cmd: "kubectl  apply -f dashboard-user.yaml"
 
+- name: 部署nfs-storage
+  block:
+    - name: 拷贝nfs-storage.yaml文件
+      template:
+        src: nfs-storage.yaml.j2
+        dest: /root/nfs-storage.yaml
+
+    - name: 应用nfs-storageyaml
+      shell:
+        cmd: "kubectl apply -f ./nfs-storageyaml"
+        chdir: "/root"
+
+- name: 使用Helm部署EFK
+  block:
+    - name: 拷贝EFK相关组件
+      copy:
+        src: "../../package/efk/{{ item }}"
+        dest: "/root"
+      loop:
+        - elasticsearch 
+        - filebeat
+        - kibana
+        - metricbeat
+
+    - name: 使用helm部署EFK相关组件
+      helm:
+        name: {{ item }}
+        atomic: true
+        chart_ref: "/root/{{ item }}"
+        create_namespace: true
+        release_namespace: logs
+      loop:
+        - elasticsearch
+        - filebeat
+        - kibana
+        - metricbeat
+
+
+
 # - name: 部署ingress
 #   block:
 #     - name: 拷贝ingress
