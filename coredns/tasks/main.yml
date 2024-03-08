@@ -22,12 +22,6 @@
         src: ../../package/coredns
         dest: /root
 
-    # - name: 修改ip地址
-    #   lineinfile:
-    #     path: "/root/coredns/values.yaml"
-    #     line: 'clusterIP: "10.96.0.10"'
-    #     regexp: "# clusterIP:"
-
     - name: 安装coredns
       shell:
         cmd: "helm install  coredns ./coredns/ -n kube-system"
