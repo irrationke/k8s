@@ -10,3 +10,13 @@
     state: restarted
     name: chronyd
     enabled: true
+
+- name: rs systemd-modules-load
+  systemd:
+    state: restarted
+    name: systemd-modules-load.service
+    enabled: true
+
+- name: rs sysctl
+  shell:
+    cmd: sysctl --system
