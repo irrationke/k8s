@@ -49,7 +49,7 @@
 
     - name: 拷贝monitoring-example.yaml
       copy:
-        src: ../../package/monitoring-example.yaml
+        src: monitoring-example.yaml
         dest: "/root"
 
     - name: 安装监控
