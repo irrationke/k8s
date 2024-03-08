@@ -68,7 +68,7 @@
 
     - name: 使用helm部署EFK相关组件
       helm:
-        name: {{ item }}
+        name: "{{ item }}"
         atomic: true
         chart_ref: "/root/{{ item }}"
         create_namespace: true
