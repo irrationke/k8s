@@ -1,7 +1,4 @@
 ---
-# 公钥路径--when判断
-public_key: /root/.ssh/id_rsa.pub
-
 # 主节点master01--when判断语句使用
 m1: 192.168.12.31
 
@@ -13,6 +10,9 @@ dnf_list: systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,aut
 
 # ubuntu安装应用列表--dnf角色使用
 apt_list: wget,psmisc,vim,net-tools,nfs-kernel-server,telnet,lvm2,git,tar,curl,ipvsadm ipset sysstat conntrack
+
+# 公钥路径--when判断--init角色
+public_key: /root/.ssh/id_rsa.pub
 
 # hosts文件插入--init角色中使用
 hosts_list: "\n192.168.12.31 k8s-master01 m1\n192.168.12.32 k8s-master02 m2\n192.168.12.33 k8s-master03 m3\n192.168.12.41 k8s-node01 n1\n192.168.12.42 k8s-node02 n2\n192.168.12.39 lb-vip"
