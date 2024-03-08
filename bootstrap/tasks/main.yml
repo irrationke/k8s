@@ -38,7 +38,7 @@
     - name: 发送admin.kubeconfig到控制机
       fetch:
         src: /root/.kube/config
-        dest: /root/.kube/config
+        dest: /root/.kube
 
     - name: 生成bootstrap.secret.yaml文件
       template:
