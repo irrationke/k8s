@@ -1,5 +1,20 @@
 ---
 # tasks file for init
+- name: 配置免密
+  block:
+    - name: 创建密钥
+      connection: local
+      shell:
+        cmd: "ssh-keygen -f /root/.ssh/id_rsa -P ''"
+      when: public_key is not exists
+
+    - name: 分发公钥到kubernetes集群节点
+      ignore_errors: yes
+      authorized_key:
+        user: root
+        state: present
+        key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+
 - name: 设置主机名称 .1
   hostname:
     name: "{{ hostname | quote }}"
