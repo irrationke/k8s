@@ -19,7 +19,7 @@
 
     - name: 拷贝CoreDNS helm包
       copy:
-        src: ../../package/coredns
+        src: ../../package/coredns/coredns
         dest: /root
 
     - name: 安装coredns

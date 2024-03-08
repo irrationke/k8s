@@ -19,7 +19,7 @@
 
     - name: 拷贝cilium helm包
       copy:
-        src: ../../package/cilium
+        src: ../../package/cilium/cilium
         dest: /root
       when: "cilium.stat.isreg is not defined"
 

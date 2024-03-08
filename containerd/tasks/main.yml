@@ -18,14 +18,14 @@
         - name: 解压cni-plugins
           unarchive:
             copy: yes
-            src: ../../package/cni-plugins-linux-amd64-v1.3.0.tgz
+            src: ../../package/containerd/cni-plugins-linux-amd64-v1.3.0.tgz
             dest: /opt/cni/bin/
           when: "vlan.stat.isreg is not defined"
 
     - name: 解压cri-containerd-cni
       unarchive:
         copy: yes
-        src: ../../package/cri-containerd-cni-1.7.8-linux-amd64.tar.gz
+        src: ../../package/containerd/cri-containerd-cni-1.7.8-linux-amd64.tar.gz
         dest: /
 
 - name: 配置Containerd所需的模块
@@ -87,7 +87,7 @@
     - name: 解压crictl客户端
       unarchive:
         copy: yes
-        src: ../../package/crictl-v1.28.0-linux-amd64.tar.gz
+        src: ../../package/containerd/crictl-v1.28.0-linux-amd64.tar.gz
         dest: /usr/bin/
       when: crictl_stat.stat.isreg is not defined
 

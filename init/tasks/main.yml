@@ -113,7 +113,7 @@
 
 - name: 拷贝kubernetes master安装文件
   copy:
-    src: ../../package/{{ item }}
+    src: ../../package/init/{{ item }}
     dest: /usr/local/bin
     mode: +x
   loop:
@@ -127,7 +127,7 @@
 
 - name: 拷贝kubernetes node安装文件
   copy:
-    src: ../../package/{{ item }}
+    src: ../../package/init/{{ item }}
     dest: /usr/local/bin
     mode: +x
   loop:

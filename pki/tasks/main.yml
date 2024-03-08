@@ -26,14 +26,14 @@
     - name: 拷贝cfssl文件
       copy:
         mode: +x
-        src: "../../package/cfssl_1.6.4_linux_amd64"
+        src: "../../package/pki/cfssl_1.6.4_linux_amd64"
         dest: /usr/local/bin/cfssl
       when: ansible_default_ipv4['address'] == m1
 
     - name: 拷贝cfssljson文件
       copy:
         mode: +x
-        src: "../../package/cfssljson_1.6.4_linux_amd64"
+        src: "../../package/pki/cfssljson_1.6.4_linux_amd64"
         dest: /usr/local/bin/cfssljson
       when: ansible_default_ipv4['address'] == m1
 
