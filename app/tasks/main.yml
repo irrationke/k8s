@@ -17,18 +17,18 @@
     - name: 判断dashboard 包是否存在
       ignore_errors: yes
       stat:
-        path: /root/kubernetes-dashboard/values.yaml
+        path: /root/kubernetes-dashboard-7.1.1.tgz
       register: dashboard
 
     - name: 拷贝helm的dashboard chart
       copy:
-        src: ../../package/kubernetes-dashboard
+        src: ../../package/dashboard/kubernetes-dashboard-7.1.1.tgz
         dest: /root
       when: "dashboard.stat.isreg is not defined"
 
     - name: 使用helm安装dashboard
       shell:
-        cmd: "helm install kubernetes-dashboard ./kubernetes-dashboard --namespace kube-system"
+        cmd: "helm install kubernetes-dashboard ./kubernetes-dashboard-7.1.1.tgz --namespace kube-system"
         chdir: "/root"
 
     - name: 创建dashboard管理员token
@@ -40,7 +40,7 @@
 
         - name: 应用dashboard-user.yaml
           shell:
-            cmd: "kubectl  apply -f dashboard-user.yaml"
+            cmd: "kubectl apply -f dashboard-user.yaml"
 
 - name: 部署nfs-storage
   block:
@@ -51,7 +51,7 @@
 
     - name: 应用nfs-storageyaml
       shell:
-        cmd: "kubectl apply -f ./nfs-storageyaml"
+        cmd: "kubectl replace --force -f ./nfs-storage.yaml"
         chdir: "/root"
 
 - name: 使用Helm部署EFK
@@ -61,23 +61,28 @@
         src: "../../package/efk/{{ item }}"
         dest: "/root"
       loop:
-        - elasticsearch 
-        - filebeat
-        - kibana
-        - metricbeat
+        - elasticsearch-8.5.1.tgz 
+        - filebeat-8.5.1.tgz
+        - kibana-8.5.1.tgz
+        - metricbeat-8.5.1.tgz
+
+    - name: 创建logs命名空间
+      shell:
+        cmd: "kubectl create namespace logs"
 
     - name: 使用helm部署EFK相关组件
-      helm:
-        name: "{{ item }}"
-        atomic: true
-        chart_ref: "/root/{{ item }}"
-        create_namespace: true
-        release_namespace: logs
-      loop:
-        - elasticsearch
-        - filebeat
-        - kibana
-        - metricbeat
+      shell:
+        cmd: "helm install {{ item.1 }} ./{{ item.0 }} --namespace logs"
+        chdir: "/root"
+      # helm:
+      #   name: "{{ item }}"
+      #   atomic: true
+      #   chart_ref: "/root/{{ item }}"
+      #   create_namespace: true
+      #   release_namespace: logs
+      with_together:
+        - [ elasticsearch-8.5.1.tgz, filebeat-8.5.1.tgz, kibana-8.5.1.tgz, metricbeat-8.5.1.tgz ]
+        - [ elasticsearch, filebeat, kibana, metricbeat ]
 
 
 
