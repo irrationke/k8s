@@ -62,6 +62,4 @@
 
     - name: 添加kubectl补全
       shell:
-        cmd: "source /usr/share/bash-completion/bash_completion && \ 
-              source <(kubectl completion bash) && \ 
-              echo "source <(kubectl completion bash)" >> ~/.bashrc"
+        cmd: "source /usr/share/bash-completion/bash_completion && source <(kubectl completion bash) && echo "source <(kubectl completion bash)" >> ~/.bashrc"
