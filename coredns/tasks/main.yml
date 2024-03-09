@@ -17,13 +17,19 @@
     #     dest: /root
     #     remote_src: yse
 
+    - name: 判断包是否存在
+      ignore_errors: yes
+      stat:
+        path: /root/coredns-1.29.0.tgz
+      register: coredns
+
     - name: 拷贝CoreDNS helm包
       copy:
-        src: ../../package/coredns/coredns
+        src: ../../package/coredns/coredns-1.29.0.tgz
         dest: /root
+      when: "coredns.stat.isreg is not defined"
 
     - name: 安装coredns
       shell:
-        cmd: "helm install  coredns ./coredns/ -n kube-system"
+        cmd: "helm install  coredns ./coredns-1.29.0.tgz -n kube-system"
         chdir: "/root"
-  when: ansible_default_ipv4.address == m1
