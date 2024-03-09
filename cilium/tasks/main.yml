@@ -8,6 +8,11 @@
         dest: /usr/local/bin/
         mode: +x
 
+    - name: 添加helm补全
+      shell:
+        cmd: "helm completion bash | tee /etc/bash_completion.d/helm"
+      ignore_errors: yes
+
     # - name: 添加cilium源
     #   shell:
     #     cmd: "helm repo add cilium https://helm.cilium.io"
