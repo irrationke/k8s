@@ -9,7 +9,7 @@
 
     - name: 部署Metrics-server
       shell:
-        cmd: "kubectl apply -f components.yaml"
+        cmd: "kubectl replace --force -f components.yaml"
         chdir: "/root"
 
 - name: 部署dashboard
@@ -40,7 +40,7 @@
 
         - name: 应用dashboard-user.yaml
           shell:
-            cmd: "kubectl apply -f dashboard-user.yaml"
+            cmd: "kubectl replace --force -f dashboard-user.yaml"
 
 - name: 部署nfs-storage
   block:
