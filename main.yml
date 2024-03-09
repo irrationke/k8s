@@ -59,3 +59,9 @@
         line: "alias ectl='etcdctl --endpoints='{{ groups['master'][0] }}:2379,{{ groups['master'][1] }}:2379,{{ groups['master'][2] }}:2379' --cacert=/etc/kubernetes/pki/etcd/etcd-ca.pem --cert=/etc/kubernetes/pki/etcd/etcd.pem --key=/etc/kubernetes/pki/etcd/etcd-key.pem'"
         insertafter: EOF
     - shell: "source /root/.bashrc"
+
+    - name: 添加kubectl补全
+      shell:
+        cmd: "source /usr/share/bash-completion/bash_completion && \ 
+              source <(kubectl completion bash) && \ 
+              echo "source <(kubectl completion bash)" >> ~/.bashrc"
