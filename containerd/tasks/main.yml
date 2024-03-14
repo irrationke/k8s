@@ -9,7 +9,7 @@
             path: /opt/cni/bin/
             state: directory
 
-        - name: 判断cni-plugins是否存在
+        - name: 判断cni-plugins是否以及解压过
           ignore_errors: yes
           stat:
             path: /opt/cni/bin/vlan
@@ -22,59 +22,64 @@
             dest: /opt/cni/bin/
           when: "vlan.stat.isreg is not defined"
 
-    - name: 解压cri-containerd-cni
-      unarchive:
-        copy: yes
-        src: ../../package/containerd/cri-containerd-cni-1.7.8-linux-amd64.tar.gz
-        dest: /
+    - name: 解压cri-containerd-cni插件
+      block:
+        - name: 判断cri-containerd-cni是否已经解压过
+          ignore_errors: yes
+          stat:
+            path: /usr/local/bin/containerd
+          register: runtime
 
-- name: 配置Containerd所需的模块
-  template:
-    src: ./templates/containerd.conf.j2
-    dest: /etc/modules-load.d/containerd.conf
-    backup: yes
+        - name: 解压cri-containerd-cni包
+          unarchive:
+            copy: yes
+            src: ../../package/containerd/cri-containerd-cni-1.7.8-linux-amd64.tar.gz
+            dest: /
+          when: "runtime.stat.isreg is not defined"
 
-- name: 加载内核模块
-  systemd:
-    name: systemd-modules-load.service
-    state: restarted
+# 立即执行上问的notify
+# - meta: flush_handlers
 
-- name: 配置Containerd所需的内核
-  template:
-    src: ./templates/99-kubernetes-cri.conf.j2
-    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+# - name: 配置Containerd所需的模块
+#   copy:
+#     src: containerd.conf
+#     dest: /etc/modules-load.d/
+#     backup: yes
+#   notify: rs sys_mod
+
+# - name: 配置Containerd所需的内核
+#   copy:
+#     src: kubernetes-cri.conf
+#     dest: /etc/sysctl.d/
+#     backup: yes
+#   changed_when: yes
+#   notify: reload system
+
+# - name: 拷贝Containerd配置文件
+#   copy:
+#     src: config.toml
+#     dest: /etc/containerd/
+
+# - name: 拷贝加速器配置文件
+#   copy:
+#     src: hosts.toml
+#     dest: /etc/containerd/certs.d/docker.io/
+#   notify: rs containerd
+
+- name: 配置containerd
+  copy:
+    src: "{{ item.0 }}"
+    dest: "{{ item.1 }}"
     backup: yes
   changed_when: yes
-  notify: reload system
+  with_together:
+    - [ containerd.service, containerd.conf, kubernetes-cri.conf, config.toml, hosts.toml ]
+    - [ /etc/systemd/system/, /etc/modules-load.d/, /etc/sysctl.d/, /etc/containerd/, /etc/containerd/certs.d/docker.io/ ]
+  notify: 
+    - rs sys_mod
+    - reload system
 
-- name: 创建containerd配置文件目录
-  file:
-    path: /etc/containerd
-    state: directory
-
-- name: 拷贝Containerd配置文件
-  template:
-    src: ./templates/config.toml.j2
-    dest: /etc/containerd/config.toml
-
-- name: 配置加速器
-  block:
-    - name: 创建/etc/containerd/certs.d/docker.io文件夹
-      file:
-        path: /etc/containerd/certs.d/docker.io
-        state: directory
-    - name: 拷贝加速器配置文件
-      template:
-        src: ./templates/hosts.toml.j2
-        dest: /etc/containerd/certs.d/docker.io/hosts.toml
-
-- name: 启动并设置Containerd为开机启动
-  block:
-    - name: 重新加载systemctl
-      shell: "systemctl daemon-reload"
-
-    - name: 设置Containerd为开机启动(立即执行)
-      shell: "systemctl enable --now containerd.service"
+- meta: flush_handlers
 
 - name: 配置crictl客户端连接的运行时位置
   block:
@@ -92,12 +97,10 @@
       when: crictl_stat.stat.isreg is not defined
 
     - name: 拷贝crictl配置文件
-      template:
-        src: ./templates/crictl.yaml.j2
-        dest: /etc/crictl.yaml
-
-- name: 重新加载containerd配置文件
-  shell: "systemctl restart  containerd"
+      copy:
+        src: crictl.yaml
+        dest: /etc/
+      notify: rs containerd
 
 - name: 测试crictl命令
   shell: "crictl info"

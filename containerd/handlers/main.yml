@@ -2,3 +2,15 @@
 # handlers file for containerd
 - name: reload system
   shell: "sysctl --system"
+
+- name: rs sys_mod
+  systemd:
+    name: systemd-modules-load.service
+    state: restarted
+
+- name: rs containerd
+  systemd:
+    name: containerd.service
+    state: restarted
+    daemon_reload: yes
+    enabled: true
