@@ -44,6 +44,9 @@ ST: Fujian
 # 证书的L字段--pki角色使用
 L: Fujian
 
+# cfssl文件--pki角色使用
+CF_version: [ cfssl_1.6.4_linux_amd64, cfssljson_1.6.4_linux_amd64 ]
+
 # etcd集群数据目录
 etcd_data_dir: /var/lib/etcd
 
