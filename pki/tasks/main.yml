@@ -8,42 +8,55 @@
 
 - name: 生成集群证书
   block:
-    - name: 创建存放k8s和etcd证书的目录
-      file:
-        state: directory
-        path: "{{ item }}"
-      loop:
-        - "{{ pki_dir }}"
-        - "{{ ssl_dir }}"
-      tags: ts1
-
-    - name: 创建存放证书配置文件的目录
-      file:
-        state: directory
-        path: "{{ pik_json }}"
-      when: ansible_default_ipv4['address'] == m1
-
-    - name: 拷贝cfssl文件
-      copy:
-        mode: +x
-        src: "../../package/pki/cfssl_1.6.4_linux_amd64"
-        dest: /usr/local/bin/cfssl
-      when: ansible_default_ipv4['address'] == m1
-
-    - name: 拷贝cfssljson文件
-      copy:
-        mode: +x
-        src: "../../package/pki/cfssljson_1.6.4_linux_amd64"
-        dest: /usr/local/bin/cfssljson
-      when: ansible_default_ipv4['address'] == m1
-
-    - name: 申请etcd的证书
+    - name: 生成集群证书--前期准备
       block:
+        - name: 创建存放k8s和etcd证书的目录
+          file:
+            state: directory
+            path: "{{ item }}"
+          loop:
+            - "{{ pki_dir }}"
+            - "{{ ssl_dir }}"
+          tags: ts1
+
+        - name: 创建存放证书配置文件的目录
+          file:
+            state: directory
+            path: "{{ pik_json }}"
+          when: ansible_default_ipv4['address'] == m1
+
+        # - name: 拷贝cfssl文件
+        #   copy:
+        #     mode: +x
+        #     src: "../../package/pki/cfssl_1.6.4_linux_amd64"
+        #     dest: /usr/local/bin/cfssl
+        #   when: ansible_default_ipv4['address'] == m1
+
+        # - name: 拷贝cfssljson文件
+        #   copy:
+        #     mode: +x
+        #     src: "../../package/pki/cfssljson_1.6.4_linux_amd64"
+        #     dest: /usr/local/bin/cfssljson
+        #   when: ansible_default_ipv4['address'] == m1
+
+        - name: 拷贝cfssl和cfssljson文件
+          copy:
+          mode: +x
+          src: "../../package/pki/{{ item.0 }}"
+          dest: "/usr/local/bin/{{ item.1 }}"
+          with_together:
+            - "{{ CF_version }}"
+            - [ cfssl, cfssljson ]
+          when: ansible_default_ipv4['address'] == m1
+
         - name: 拷贝CA证书所需的基本配置文件
           template:
             src: ca-config.json.j2
             dest: "{{ pik_json }}ca-config.json"
+          when: ansible_default_ipv4['address'] == m1
 
+    - name: 申请etcd的证书
+      block:
         - name: etcd的根证书模块
           block:
             - name: 拷贝生成CA证书机构的CSR签名请求文件
@@ -71,7 +84,7 @@
         - name: 拷贝etcd证书到其他节点
           ignore_errors: yes
           script:
-            cmd: "./files/etcd_pki.sh"
+            cmd: "etcd_pki.sh"
 
       tags: ts
       when: ansible_default_ipv4['address'] == m1
