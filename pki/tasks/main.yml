@@ -41,9 +41,9 @@
 
         - name: 拷贝cfssl和cfssljson文件
           copy:
-          mode: +x
-          src: "../../package/pki/{{ item.0 }}"
-          dest: "/usr/local/bin/{{ item.1 }}"
+            mode: +x
+            src: "../../package/pki/{{ item.0 }}"
+            dest: "/usr/local/bin/{{ item.1 }}"
           with_together:
             - "{{ CF_version }}"
             - [ cfssl, cfssljson ]
