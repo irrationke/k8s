@@ -102,6 +102,8 @@
         dest: /etc/
       notify: rs containerd
 
+- meta: flush_handlers
+
 - name: 测试crictl命令
   shell: "crictl info"
   register: test_crictl
