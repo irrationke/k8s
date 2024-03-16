@@ -1,10 +1,18 @@
 ---
 # tasks file for lb
 - name: 安装keepalived和haproxy服务
-  dnf:
-    update_cache: yes
-    name: "haproxy,keepalived"
-    state: installed
+  block:
+    - dnf:
+        update_cache: yes
+        name: "haproxy,keepalived"
+        state: installed
+      when: ansible_pkg_mgr == "dnf"
+
+    - apt:
+        update_cache: yes
+        name: "haproxy,keepalived"
+        state: installed
+      when: ansible_pkg_mgr == "apt"
 
 - name: 拷贝haproxy配置文件
   template:
@@ -34,14 +42,14 @@
       changed_when: yes
       notify: rs keepalived
 
-    - meta: flush_handlers
-
 - name: 拷贝健康检查脚本文件
   copy:
     src: check_apiserver.sh
     dest: /etc/keepalived/check_apiserver.sh
     mode: +x
     backup: yes
+
+- meta: flush_handlers
 
 - name: 等待VIP上线
   delegate_to: localhost
