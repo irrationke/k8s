@@ -1,5 +1,5 @@
 #!/bin/bash
-k8s='192.168.12.32 192.168.12.33 192.168.12.41 192.168.12.42'
+k8s='192.168.12.32 192.168.12.33'
 for NODE in $k8s; do
     for FILE in $(ls /etc/kubernetes/pki | grep -v etcd); do
         scp -o StrictHostKeyChecking=no /etc/kubernetes/pki/${FILE} $NODE:/etc/kubernetes/pki/${FILE}
