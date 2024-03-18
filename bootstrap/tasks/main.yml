@@ -2,55 +2,55 @@
 # tasks file for bootstrap
 - name: bootstrap设置
   block:
-    - name: 设置集群信息
-      shell:
-        cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://{{ vip }}:{{ vip_port }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
-      # when: ansible_default_ipv4.address == m1
+    - name: bootstrap-kubelet.kubeconfig文件配置
+      block:
+        - name: 设置集群信息
+          shell:
+            cmd: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://{{ vip }}:{{ vip_port }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
 
-    - name: 设置凭证信息
-      shell:
-        cmd: "kubectl config set-credentials tls-bootstrap-token-user --token={{ bootstrap_token_id }}.{{ bootstrap_token_secret }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
-      # when: ansible_default_ipv4.address == m1
+        - name: 设置凭证信息
+          shell:
+            cmd: "kubectl config set-credentials tls-bootstrap-token-user --token={{ bootstrap_token_id }}.{{ bootstrap_token_secret }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
 
-    - name: 设置上下文
-      shell:
-        cmd: "kubectl config set-context tls-bootstrap-token-user@kubernetes --cluster=kubernetes --user=tls-bootstrap-token-user --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
-      # when: ansible_default_ipv4.address == m1
+        - name: 设置上下文
+          shell:
+            cmd: "kubectl config set-context tls-bootstrap-token-user@kubernetes --cluster=kubernetes --user=tls-bootstrap-token-user --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
 
-    - name: 使用上下文
-      shell:
-        cmd: "kubectl config use-context tls-bootstrap-token-user@kubernetes --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
-      # when: ansible_default_ipv4.address == m1
+        - name: 使用上下文
+          shell:
+            cmd: "kubectl config use-context tls-bootstrap-token-user@kubernetes --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+    
+    - name: 配置kubectl默认kubeconfig文件
+      block:
+        - name: 创建/root/.kube目录
+          file:
+            state: directory
+            path: /root/.kube
 
-    - name: 创建/root/.kube目录
-      file:
-        state: directory
-        path: /root/.kube
-      # when: ansible_default_ipv4.address == m1
+        - name: 拷贝admin.kubeconfig文件
+          copy:
+            remote_src: yes
+            src: /etc/kubernetes/admin.kubeconfig
+            dest: /root/.kube/config
 
-    - name: 拷贝admin.kubeconfig文件
-      copy:
-        remote_src: yes
-        src: /etc/kubernetes/admin.kubeconfig
-        dest: /root/.kube/config
-      # when: ansible_default_ipv4.address == m1
+        - name: 发送admin.kubeconfig到控制机
+          shell:
+            cmd: "scp root@192.168.12.31:/root/.kube/config /root/.kube/config"
+          # fetch:
+          #   src: /etc/kubernetes/admin.kubeconfig
+          #   dest: /root/.kube/config
+          ignore_errors: yes
 
-    - name: 发送admin.kubeconfig到控制机
-      shell:
-        cmd: "scp 192.168.12.31:/root/.kube/config /root/.kube/config"
-      # fetch:
-      #   src: /etc/kubernetes/admin.kubeconfig
-      #   dest: /root/.kube/config
-      ignore_errors: yes
+    - name: 
+      block:
+        - name: 生成bootstrap.secret.yaml文件
+          template:
+            src: bootstrap.secret.yaml.j2
+            dest: /root/bootstrap.secret.yaml
 
-    - name: 生成bootstrap.secret.yaml文件
-      template:
-        src: bootstrap.secret.yaml.j2
-        dest: /root/bootstrap.secret.yaml
-
-    - name: 创建token
-      ignore_errors: yes
-      shell:
-        chdir: "/root"
-        cmd: "kubectl replace --force -f ./bootstrap.secret.yaml"
+        - name: 创建token
+          ignore_errors: yes
+          shell:
+            chdir: "/root"
+            cmd: "kubectl replace --force -f ./bootstrap.secret.yaml"
   when: ansible_default_ipv4.address == m1
