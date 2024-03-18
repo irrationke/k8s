@@ -11,7 +11,7 @@
 
 - name: 创建etcd配置文件
   template:
-    src: ./etcd.config.yml.j2
+    src: etcd.config.yml.j2
     dest: /etc/etcd/etcd.config.yml
   tags: ts
 
@@ -34,8 +34,8 @@
     force: yes
 
 - name: 创建etcd守护进程服务
-  template:
-    src: ./etcd.service.j2
+  copy:
+    src: etcd.service
     dest: /usr/lib/systemd/system/etcd.service
   changed_when: yes
   notify: rs etcd
