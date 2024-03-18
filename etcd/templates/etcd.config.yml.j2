@@ -16,7 +16,7 @@ discovery:
 discovery-fallback: 'proxy'
 discovery-proxy:
 discovery-srv:
-initial-cluster: 'k8s-master01=https://{{ groups['master'][0] }}:2380,k8s-master02=https://{{ groups['master'][1] }}:2380,k8s-master03=https://{{ groups['master'][2] }}:2380'
+initial-cluster: 'k8s-master01=https://{{ groups['etcd'][0] }}:2380,k8s-master02=https://{{ groups['etcd'][1] }}:2380,k8s-master03=https://{{ groups['etcd'][2] }}:2380'
 initial-cluster-token: 'etcd-k8s-cluster'
 initial-cluster-state: 'new'
 strict-reconfig-check: false
