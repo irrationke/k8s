@@ -1,15 +1,5 @@
 ---
 # tasks file for master
-- name: 创建相关目录
-  file:
-    path: "{{ item }}"
-    state: directory
-  loop:
-    - /etc/kubernetes/manifests
-    - /etc/systemd/system/kubelet.service.d
-    - /var/lib/kubelet
-    - /var/log/kubernetes
-
 - name: 拷贝apiserver守护进程文件
   template:
     src: kube-apiserver.service.j2
