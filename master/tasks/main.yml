@@ -1,20 +1,20 @@
 ---
 # tasks file for master
-- name: 拷贝apiserver守护进程文件
+- name: 启动apiserver守护进程
   template:
     src: kube-apiserver.service.j2
     dest: /usr/lib/systemd/system/kube-apiserver.service
   changed_when: yes
   notify: rs apiserver
 
-- name: 拷贝kube-controller-manager守护进程文件
+- name: 启动kube-controller-manager守护进程
   template:
     src: kube-controller-manager.service.j2
     dest: /usr/lib/systemd/system/kube-controller-manager.service
   changed_when: yes
   notify: rs manager
 
-- name: 拷贝kube-scheduler守护进程文件
+- name: 启动kube-scheduler守护进程
   template:
     src: kube-scheduler.service.j2
     dest: /usr/lib/systemd/system/kube-scheduler.service
