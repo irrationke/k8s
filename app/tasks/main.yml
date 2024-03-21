@@ -14,17 +14,17 @@
 
 - name: 部署dashboard
   block:
-    - name: 判断dashboard 包是否存在
-      ignore_errors: yes
-      stat:
-        path: /root/kubernetes-dashboard-7.1.1.tgz
-      register: dashboard
+    # - name: 判断dashboard 包是否存在
+    #   ignore_errors: yes
+    #   stat:
+    #     path: /root/kubernetes-dashboard-7.1.1.tgz
+    #   register: dashboard
 
     - name: 拷贝helm的dashboard chart
       copy:
         src: ../../package/dashboard/kubernetes-dashboard-7.1.1.tgz
         dest: /root
-      when: "dashboard.stat.isreg is not defined"
+      # when: "dashboard.stat.isreg is not defined"
 
     - name: 使用helm安装dashboard
       shell:
