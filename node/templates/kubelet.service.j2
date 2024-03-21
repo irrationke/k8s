@@ -11,8 +11,7 @@ ExecStart=/usr/local/bin/kubelet \
     --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
     --config=/etc/kubernetes/kubelet-conf.yml \
     --container-runtime-endpoint=unix:///run/containerd/containerd.sock  \
-    --node-labels=node.kubernetes.io/node= \
-    --node-ip={{ ansible_default_ipv4['address'] }}
+    --node-labels=node.kubernetes.io/node= 
 
 [Install]
 WantedBy=multi-user.target
