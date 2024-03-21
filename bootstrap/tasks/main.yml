@@ -34,6 +34,8 @@
             dest: /root/.kube/config
 
         - name: 发送admin.kubeconfig到控制机
+          # delegate_to: localhost
+          connection: local
           shell:
             cmd: "scp root@192.168.12.31:/root/.kube/config /root/.kube/config"
           # fetch:
