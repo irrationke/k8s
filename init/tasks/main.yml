@@ -91,11 +91,11 @@
         dest: /etc/security/limits.conf
         backup: yes
 
-- name: 安装ipvsadm 
-  copy:
-    src: ipvs.conf
-    dest: /etc/modules-load.d/ipvs.conf
-  notify: rs systemd-modules-load
+# - name: 安装ipvsadm 
+#   copy:
+#     src: ipvs.conf
+#     dest: /etc/modules-load.d/ipvs.conf
+#   notify: rs systemd-modules-load
 
 - name: 配置内核参数
   copy:
