@@ -21,7 +21,6 @@ ExecStart=/usr/local/bin/kube-controller-manager \
       --allocate-node-cidrs=true \
       --service-cluster-ip-range={{ svc_cidr }} \
       --node-cidr-mask-size-ipv4=24 \
-      --node-cidr-mask-size-ipv6=120 \
       --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.pem
 
 Restart=always
