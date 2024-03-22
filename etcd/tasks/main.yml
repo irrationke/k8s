@@ -37,7 +37,7 @@
   copy:
     src: etcd.service
     dest: /usr/lib/systemd/system/etcd.service
-  changed_when: yes
+  # changed_when: yes
   notify: rs etcd
   tags: ts
 

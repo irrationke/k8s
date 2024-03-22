@@ -4,21 +4,21 @@
   template:
     src: kube-apiserver.service.j2
     dest: /usr/lib/systemd/system/kube-apiserver.service
-  changed_when: yes
+  # changed_when: yes
   notify: rs apiserver
 
 - name: 启动kube-controller-manager守护进程
   template:
     src: kube-controller-manager.service.j2
     dest: /usr/lib/systemd/system/kube-controller-manager.service
-  changed_when: yes
+  # changed_when: yes
   notify: rs manager
 
 - name: 启动kube-scheduler守护进程
   template:
     src: kube-scheduler.service.j2
     dest: /usr/lib/systemd/system/kube-scheduler.service
-  changed_when: yes
+  # changed_when: yes
   notify: rs scheduler
 
 - meta: flush_handlers

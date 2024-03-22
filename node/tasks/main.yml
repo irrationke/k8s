@@ -27,7 +27,7 @@
       template:
         src: kubelet-conf.yml.j2
         dest: /etc/kubernetes/kubelet-conf.yml
-      changed_when: yes
+      # changed_when: yes
       notify: rs kubelet
 
 - name: kube-proxy配置 8.3
@@ -41,7 +41,7 @@
       template:
         src: kube-proxy.yaml.j2
         dest: /etc/kubernetes/kube-proxy.yaml
-      changed_when: yes
+      # changed_when: yes
       notify: rs kube-proxy
 
 # - name: 检查node组件是否启动

@@ -30,7 +30,7 @@
         dest: /etc/keepalived/keepalived.conf
         backup: yes
       when: ansible_default_ipv4['address'] == m1
-      changed_when: yes
+      # changed_when: yes
       notify: rs keepalived
 
     - name: 拷贝keepalived backup配置文件
@@ -39,7 +39,7 @@
         dest: /etc/keepalived/keepalived.conf
         backup: yes
       when: ansible_default_ipv4['address'] != m1
-      changed_when: yes
+      # changed_when: yes
       notify: rs keepalived
 
 - name: 拷贝健康检查脚本文件
