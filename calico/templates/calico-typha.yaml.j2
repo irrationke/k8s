@@ -1122,8 +1122,9 @@ spec:
                 - Disabled
                 type: string
               bpfKubeProxyEndpointSlicesEnabled:
-                description: BPFKubeProxyEndpointSlicesEnabled in BPF mode, controls
-                  whether Felix's embedded kube-proxy accepts EndpointSlices or not.
+                description: BPFKubeProxyEndpointSlicesEnabled is deprecated and has
+                  no effect. BPF kube-proxy always accepts endpoint slices. This option
+                  will be removed in the next release.
                 type: boolean
               bpfKubeProxyIptablesCleanupEnabled:
                 description: 'BPFKubeProxyIptablesCleanupEnabled, if enabled in BPF
@@ -1242,9 +1243,21 @@ spec:
                 type: string
               debugDisableLogDropping:
                 type: boolean
+              debugHost:
+                description: DebugHost is the host IP or hostname to bind the debug
+                  port to.  Only used if DebugPort is set. [Default:localhost]
+                type: string
               debugMemoryProfilePath:
                 type: string
+              debugPort:
+                description: DebugPort if set, enables Felix's debug HTTP port, which
+                  allows memory and CPU profiles to be retrieved.  The debug port
+                  is not secure, it should not be exposed to the internet.
+                type: integer
               debugSimulateCalcGraphHangAfter:
+                pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
+                type: string
+              debugSimulateDataplaneApplyDelay:
                 pattern: ^([0-9]+(\\.[0-9]+)?(ms|s|m|h))*$
                 type: string
               debugSimulateDataplaneHangAfter:
@@ -1286,6 +1299,12 @@ spec:
                 type: string
               endpointReportingEnabled:
                 type: boolean
+              endpointStatusPathPrefix:
+                description: "EndpointStatusPathPrefix is the path to the directory
+                  where endpoint status will be written. Endpoint status file reporting
+                  is disabled if field is left empty. \n Chosen directory should match
+                  the directory used by the CNI for PodStartupDelay. [Default: \"\"]"
+                type: string
               externalNodesList:
                 description: ExternalNodesCIDRList is a list of CIDR's of external-non-calico-nodes
                   which may source tunnel traffic and have the tunneled traffic be
@@ -4614,7 +4633,7 @@ rules:
       - create
       - update
   # Calico must update some CRDs.
-  - apiGroups: [ "crd.projectcalico.org" ]
+  - apiGroups: ["crd.projectcalico.org"]
     resources:
       - caliconodestatuses
     verbs:
@@ -4813,7 +4832,7 @@ spec:
         # It can be deleted if this is a fresh installation, or if you have already
         # upgraded to use calico-ipam.
         - name: upgrade-ipam
-          image: docker.io/calico/cni:master
+          image: registry.cn-shenzhen.aliyuncs.com/kubernetes-kl/calico-cni:master
           imagePullPolicy: IfNotPresent
           command: ["/opt/cni/bin/calico-ipam", "-upgrade"]
           envFrom:
@@ -4841,7 +4860,7 @@ spec:
         # This container installs the CNI binaries
         # and CNI network config file on each node.
         - name: install-cni
-          image: docker.io/calico/cni:master
+          image: registry.cn-shenzhen.aliyuncs.com/kubernetes-kl/calico-cni:master
           imagePullPolicy: IfNotPresent
           command: ["/opt/cni/bin/install"]
           envFrom:
@@ -4884,7 +4903,7 @@ spec:
         # i.e. bpf at /sys/fs/bpf and cgroup2 at /run/calico/cgroup. Calico-node initialisation is executed
         # in best effort fashion, i.e. no failure for errors, to not disrupt pod creation in iptable mode.
         - name: "mount-bpffs"
-          image: docker.io/calico/node:master
+          image: registry.cn-shenzhen.aliyuncs.com/kubernetes-kl/calico-node:master
           imagePullPolicy: IfNotPresent
           command: ["calico-node", "-init", "-best-effort"]
           volumeMounts:
@@ -4910,7 +4929,7 @@ spec:
         # container programs network policy and routes on each
         # host.
         - name: calico-node
-          image: docker.io/calico/node:master
+          image: registry.cn-shenzhen.aliyuncs.com/kubernetes-kl/calico-node:master
           imagePullPolicy: IfNotPresent
           envFrom:
           - configMapRef:
@@ -4977,8 +4996,8 @@ spec:
             # The default IPv4 pool to create on startup if none exists. Pod IPs will be
             # chosen from this range. Changing this value after installation will have
             # no effect. This should fall within `--cluster-cidr`.
-            - name: CALICO_IPV4POOL_CIDR
-              value: "172.16.0.0/12"
+            # - name: CALICO_IPV4POOL_CIDR
+            #   value: "{{ cluster_cidr }}"
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
@@ -5133,7 +5152,7 @@ spec:
       priorityClassName: system-cluster-critical
       containers:
         - name: calico-kube-controllers
-          image: docker.io/calico/kube-controllers:master
+          image: registry.cn-shenzhen.aliyuncs.com/kubernetes-kl/calico-kube-controllers:master
           imagePullPolicy: IfNotPresent
           env:
             # Choose which controllers to run.
@@ -5222,7 +5241,7 @@ spec:
       securityContext:
         fsGroup: 65534
       containers:
-      - image: docker.io/calico/typha:master
+      - image: registry.cn-shenzhen.aliyuncs.com/kubernetes-kl/calico-typha:master
         imagePullPolicy: IfNotPresent
         name: calico-typha
         ports:

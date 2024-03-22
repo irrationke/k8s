@@ -2,12 +2,12 @@
 # tasks file for calico
 - name:
   block:
-    - name: 
-      copy:
-        src: calico-typha.yaml
+    - name: 安装calico网络插件
+      template:
+        src: calico-typha.yaml.j2
         dest: /root/calico.yaml
     - name:
       shell:
         chdir: "/root/"
-        cmd: "kubectl apply -f calico.yaml"
+        cmd: "kubectl replace --force -f calico.yaml"
   when: ansible_default_ipv4['address'] == m1
