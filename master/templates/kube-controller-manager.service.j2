@@ -1,3 +1,4 @@
+
 [Unit]
 Description=Kubernetes Controller Manager
 Documentation=https://github.com/kubernetes/kubernetes
@@ -17,10 +18,11 @@ ExecStart=/usr/local/bin/kube-controller-manager \
       --node-monitor-grace-period=40s \
       --node-monitor-period=5s \
       --controllers=*,bootstrapsigner,tokencleaner \
-      --cluster-cidr={{ cluster_cidr }} \
       --allocate-node-cidrs=true \
       --service-cluster-ip-range={{ svc_cidr }} \
+      --cluster-cidr={{ cluster_cidr }} \
       --node-cidr-mask-size-ipv4=24 \
+      --node-cidr-mask-size-ipv6=120 \
       --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.pem
 
 Restart=always
@@ -28,3 +30,4 @@ RestartSec=10s
 
 [Install]
 WantedBy=multi-user.target
+
