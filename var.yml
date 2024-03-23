@@ -6,7 +6,7 @@ m1: 192.168.12.31
 base: 192.168.12.30
 
 # openEuler安装应用列表--dnf角色使用
-dnf_list: systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl,htop,tree,bash-completion,ipvsadm,ipset,sysstat,conntrack,libseccomp
+dnf_list: systemd-devel,wget,ftp,mlocate,openssl,openssl-devel,net-tools,gcc,automake,autoconf,libtool,make,libselinux-python3,psmisc,vim,nfs-utils,telnet,device-mapper-persistent-data,git,tar,curl,htop,tree,bash-completion,ipvsadm,ipset,sysstat,conntrack,libseccomp,socat,ebtables
 
 # ubuntu安装应用列表--dnf角色使用
 apt_list: wget,psmisc,vim,net-tools,nfs-kernel-server,telnet,lvm2,git,tar,curl,ipvsadm ipset sysstat conntrack
@@ -23,11 +23,14 @@ master: "192.168.12.31 192.168.12.32 192.168.12.33"
 # node节点地址--init角色中使用
 node: "192.168.12.41 192.168.12.42"
 
+# 集群节点CIDR范围
+node_cidr: 192.168.12.0/24
+
 # etcd集群通讯地址--pki角色使用
-etcd_hosts: 127.0.0.1,k8s-master01,k8s-master02,k8s-master03,192.168.12.31,192.168.12.32,192.168.12.33,fc00:43f4:1eea:1::10,fc00:43f4:1eea:1::20,fc00:43f4:1eea:1::30,::1
+etcd_hosts: 127.0.0.1,k8s-master01,k8s-master02,k8s-master03,192.168.12.31,192.168.12.32,192.168.12.33
 
 # kubernetes集群通讯地址--pki角色使用--vip（192.168.12.39）地址注意更改
-k8s_pki: 192.168.12.39,10.96.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.default.svc.cluster.local,x.oiox.cn,k.oiox.cn,l.oiox.cn,o.oiox.cn,192.168.12.31,192.168.12.32,192.168.12.33,192.168.12.41,192.168.12.42,fc00:43f4:1eea:1::10,fc00:43f4:1eea:1::20,fc00:43f4:1eea:1::30,fc00:43f4:1eea:1::40,fc00:43f4:1eea:1::50,fc00:43f4:1eea:1::60,fc00:43f4:1eea:1::70,fc00:43f4:1eea:1::80,fc00:43f4:1eea:1::90,fc00:43f4:1eea:1::100,::1
+k8s_pki: 192.168.12.39,10.96.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.default.svc.cluster.local,x.oiox.cn,k.oiox.cn,l.oiox.cn,o.oiox.cn,192.168.12.31,192.168.12.32,192.168.12.33,192.168.12.41,192.168.12.42,
 
 # kubernetes集群证书目录--pki角色使用
 pki_dir: /etc/kubernetes/pki/
@@ -60,13 +63,13 @@ vip: 192.168.12.39
 vip_port: 9443
 
 # service资源ip范围--master角色
-svc_cidr: 10.96.0.0/12,fd00:1111::/112
+svc_cidr: 10.96.0.0/12
 
 # service资源类型NodePort端口范围--master角色
 node_port: 30000-32767
 
 # 集群CIDR范围--master角色
-cluster_cidr: 172.16.0.0/12,fc00:2222::/112
+cluster_cidr: 172.16.0.0/12
 
 # bootstrap_token_id集群引导token--bootstrap角色
 # token_id需要符合正则表达式[a-z0-9]{6}
