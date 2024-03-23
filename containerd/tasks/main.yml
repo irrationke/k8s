@@ -73,7 +73,7 @@
     backup: yes
   changed_when: yes
   with_together:
-    - [ containerd.service, containerd.conf, kubernetes-cri.conf, config.toml, hosts.toml ]
+    - [ containerd.service, containerd.conf, 99-kubernetes-cri.conf, config.toml, hosts.toml ]
     - [ /etc/systemd/system/, /etc/modules-load.d/, /etc/sysctl.d/, /etc/containerd/, /etc/containerd/certs.d/docker.io/ ]
   notify: 
     - rs sys_mod
