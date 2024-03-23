@@ -67,27 +67,27 @@
         - metricbeat-8.5.1.tgz
 
     - name: 创建logs命名空间
-      k8s:
-        name: logs
-        api_version: v1
-        kind: Namespace
-        state: present
-      # shell:
-      #   cmd: "kubectl create namespace logs"
-
-    - name: 使用helm部署EFK相关组件
+      # k8s:
+      #   name: logs
+      #   api_version: v1
+      #   kind: Namespace
+      #   state: present
       shell:
-        cmd: "helm install {{ item.1 }} ./{{ item.0 }} --namespace logs"
-        chdir: "/root"
-      # helm:
-      #   name: "{{ item }}"
-      #   atomic: true
-      #   chart_ref: "/root/{{ item }}"
-      #   create_namespace: true
-      #   release_namespace: logs
-      with_together:
-        - [ elasticsearch-8.5.1.tgz, filebeat-8.5.1.tgz, metricbeat-8.5.1.tgz, kibana-8.5.1.tgz ]
-        - [ elasticsearch, filebeat, metricbeat, kibana ]
+        cmd: "kubectl create namespace logs"
+
+#     - name: 使用helm部署EFK相关组件
+#       shell:
+#         cmd: "helm install {{ item.1 }} ./{{ item.0 }} --namespace logs"
+#         chdir: "/root"
+#       # helm:
+#       #   name: "{{ item }}"
+#       #   atomic: true
+#       #   chart_ref: "/root/{{ item }}"
+#       #   create_namespace: true
+#       #   release_namespace: logs
+#       with_together:
+#         - [ elasticsearch-8.5.1.tgz, filebeat-8.5.1.tgz, metricbeat-8.5.1.tgz, kibana-8.5.1.tgz ]
+#         - [ elasticsearch, filebeat, metricbeat, kibana ]
 
 
 
