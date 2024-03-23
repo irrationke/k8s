@@ -32,6 +32,7 @@
   vars_files: ./var.yml
   remote_user: root
   roles:
+    # - calico
     - cilium
     - coredns
 
@@ -64,11 +65,11 @@
       shell:
         cmd: "source /usr/share/bash-completion/bash_completion && source <(kubectl completion bash) && echo 'source <(kubectl completion bash)' >> ~/.bashrc"
 
-- name: 重启
-  hosts: k8s
-  vars_files: ./var.yml
-  remote_user: root
-  tasks:
-    - shell:
-        cmd: "reboot now"
+# - name: 重启
+#   hosts: k8s
+#   vars_files: ./var.yml
+#   remote_user: root
+#   tasks:
+#     - shell:
+#         cmd: "reboot now"
      
