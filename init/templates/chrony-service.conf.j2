@@ -2,7 +2,7 @@ pool ntp.aliyun.com iburst
 driftfile /var/lib/chrony/drift
 makestep 1.0 3
 rtcsync
-allow 192.168.12.0/24
+allow {{ node_cidr }}
 local stratum 10
 keyfile /etc/chrony.keys
 leapsectz right/UTC
