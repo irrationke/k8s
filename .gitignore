@@ -1,4 +1,4 @@
 .vscode/settings.json
-log
+log/ansible.log
 package
 k8s.zip
