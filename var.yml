@@ -63,7 +63,7 @@ vip: 192.168.12.39
 vip_port: 9443
 
 # service资源ip范围--master角色
-svc_cidr: 10.96.0.0/12.,2408:4003:1014:2200::/112
+svc_cidr: 10.96.0.0/12,2408:4003:1014:2200::/112
 
 # service资源类型NodePort端口范围--master角色
 node_port: 30000-32767
